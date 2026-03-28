@@ -12,6 +12,7 @@
   --ink-muted:  #4a5a6e;
 
   --border:     #e5e5e5;
+  --error:      #dc2626;
 }
 
 /* ── Tailwind theme registration ────────────────────────────── */
@@ -24,6 +25,7 @@
   --color-ink:      var(--ink);
   --color-ink-muted: var(--ink-muted);
   --color-border:      var(--border);
+  --color-error:       var(--error);
 
   --font-sans: var(--font-poppins);
 }
