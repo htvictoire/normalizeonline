@@ -2,7 +2,7 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const FROM = "Normalize <onboarding@resend.dev>";
+const FROM = "Normalize <noreply@normalizeonline.com>";
 const OWNER = "victoirehabamungut@gmail.com";
 
 export async function sendMail({
