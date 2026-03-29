@@ -13,9 +13,9 @@ export default function Steps() {
       {steps.map((step) => {
         const Art = step.art;
         return (
-          <div key={step.title} className="min-w-0 text-center">
-            <div className="mx-auto w-28">
-              <Art className="w-full h-auto" />
+          <div key={step.title} className="flex min-w-0 flex-col items-center text-center">
+            <div className="mx-auto flex h-32 items-end justify-center">
+              <Art className="h-full w-auto max-w-full" />
             </div>
             <div className="mt-4 text-lg font-semibold tracking-tight text-ink">{step.title}</div>
             <p className="mt-2 text-sm leading-6 text-ink-muted">{step.desc}</p>
