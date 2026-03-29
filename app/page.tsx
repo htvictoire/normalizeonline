@@ -56,12 +56,14 @@ export default function Page() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <main className="mx-auto max-w-7xl px-6 py-8">
-        <h1 className="mt-4 text-center text-6xl font-semibold tracking-tight text-ink">
+      <main className="mx-auto max-w-7xl px-4 py-6 md:px-6 md:py-8">
+        <h1 className="mt-2 text-center text-4xl font-semibold tracking-tight text-ink sm:text-5xl md:mt-4 md:text-6xl">
           Turn messy files into clean data.
         </h1>
-        <Steps />
-        <section className="mt-12">
+        <section className="mt-10 md:mt-0">
+          <Steps />
+        </section>
+        <section className="mt-10 md:mt-12">
           <UploadPad />
         </section>
       </main>

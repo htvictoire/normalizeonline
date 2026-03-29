@@ -4,11 +4,11 @@ import Link from "next/link";
 export default function Footer() {
   return (
     <footer className="mt-auto border-t border-border bg-canvas">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-8 px-6 py-6">
+      <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-6 text-center md:flex-row md:items-center md:justify-between md:gap-8 md:px-6 md:text-left">
         <Link href="/">
           <Image src="/normalizelogo.png" alt="Normalize" height={30} width={150} />
         </Link>
-        <p className="text-xs text-ink-muted">
+        <p className="max-w-xs text-xs text-ink-muted md:max-w-none">
           Turn messy tabular files into a clean, confirmed dataset.
         </p>
         <p className="text-xs text-ink-muted">
