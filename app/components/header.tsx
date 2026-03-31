@@ -5,10 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 
 const navLinks = [
+  { label: "Blog", href: "/blog" },
+  { label: "Contact", href: "/contact" },
   { label: "Privacy Policy", href: "/privacy" },
   { label: "Data Protection", href: "/data-protection" },
   { label: "Terms of Use", href: "/terms" },
-  { label: "Contact", href: "/contact" },
 ];
 
 export default function Header() {
@@ -32,13 +33,13 @@ export default function Header() {
   }, [mobileOpen]);
 
   return (
-    <header className="border-b border-border bg-canvas">
+    <header className="sticky top-0 z-40 border-b border-border bg-canvas">
       <div className="hidden md:block">
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-8 px-6">
           <Link href="/">
-            <Image src="/normalizelogo.png" alt="Normalize" height={36} width={180} priority />
+            <Image src="/normalizelogo.png" alt="Normalize" height={28} width={140} priority />
           </Link>
-          <nav className="flex flex-wrap items-center gap-6" aria-label="Legal">
+          <nav className="flex flex-wrap items-center gap-6" aria-label="Primary">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -69,10 +70,10 @@ export default function Header() {
             <Image
               src="/normalizelogo.png"
               alt="Normalize"
-              height={36}
-              width={180}
+              height={28}
+              width={140}
               priority
-              className="h-8 w-auto"
+              className="h-6 w-auto"
             />
           </Link>
           <button
@@ -113,10 +114,10 @@ export default function Header() {
                   <Image
                     src="/normalizelogo.png"
                     alt="Normalize"
-                    height={36}
-                    width={180}
+                    height={28}
+                    width={140}
                     priority
-                    className="h-8 w-auto"
+                    className="h-6 w-auto"
                   />
                 </Link>
                 <button
@@ -131,7 +132,7 @@ export default function Header() {
                 </button>
               </div>
 
-              <nav className="mt-4 flex flex-col gap-1" aria-label="Legal">
+              <nav className="mt-4 flex flex-col gap-1" aria-label="Primary">
                 {navLinks.map((link) => (
                   <Link
                     key={link.href}

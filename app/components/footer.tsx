@@ -6,7 +6,7 @@ export default function Footer() {
     <footer className="mt-auto border-t border-border bg-canvas">
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-6 text-center md:flex-row md:items-center md:justify-between md:gap-8 md:px-6 md:text-left">
         <Link href="/">
-          <Image src="/normalizelogo.png" alt="Normalize" height={30} width={150} />
+          <Image src="/normalizelogo.png" alt="Normalize" height={22} width={110} />
         </Link>
         <p className="max-w-xs text-xs text-ink-muted md:max-w-none">
           Turn messy tabular files into a clean, confirmed dataset.
@@ -14,9 +14,14 @@ export default function Footer() {
         <p className="text-xs text-ink-muted">
           &copy; {new Date().getFullYear()} Normalize. All rights reserved.
         </p>
-        <Link href="/contact" className="text-xs text-ink-muted hover:text-ink">
-          Contact
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link href="/blog" className="text-xs text-ink-muted hover:text-ink">
+            Blog
+          </Link>
+          <Link href="/contact" className="text-xs text-ink-muted hover:text-ink">
+            Contact
+          </Link>
+        </div>
         <Link
           href="https://github.com/htvictoire/normalize"
           target="_blank"
