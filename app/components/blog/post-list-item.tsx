@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { type BlogPost, formatBlogDate, tKey } from "@/app/lib/blog";
+import { type BlogPost, formatBlogDate } from "@/app/lib/blog";
 import { type Locale } from "@/i18n/config";
 
 export default function BlogPostListItem({ post }: { post: BlogPost }) {
@@ -10,11 +10,11 @@ export default function BlogPostListItem({ post }: { post: BlogPost }) {
   const locale = useLocale() as Locale;
 
   return (
-    <article className="py-6 first:pt-0 last:pb-0">
+    <article className="py-4 first:pt-0 last:pb-0 sm:py-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-3 text-xs font-medium uppercase tracking-[0.18em] text-brand">
-            <span>{t(`categories.${tKey(post.category)}`)}</span>
+          <div className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-[0.08em] text-brand sm:gap-3 sm:tracking-[0.18em]">
+            <span>{t(`categories.${post.category}`)}</span>
             <time dateTime={post.publishedAt} className="text-ink-muted">
               {formatBlogDate(post.publishedAt, locale)}
             </time>
@@ -46,13 +46,13 @@ export default function BlogPostListItem({ post }: { post: BlogPost }) {
                 key={tag}
                 className="rounded-full border border-border px-3 py-1 text-xs text-ink-muted"
               >
-                {t(`tags.${tKey(tag)}`)}
+                {t(`tags.${tag}`)}
               </span>
             ))}
           </div>
         </div>
 
-        <div className="lg:pt-1">
+        <div className="hidden lg:block lg:pt-1">
           <Link
             href={{ pathname: "/blog/[slug]", params: { slug: post.slug } }}
             className="inline-flex items-center text-sm font-medium text-ink transition-colors hover:text-brand"

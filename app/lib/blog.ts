@@ -1,47 +1,44 @@
 import type { Locale } from "@/i18n/config";
 
 export const blogCategories = [
-  "Workflow Design",
-  "Operations",
-  "Data Quality",
+  { key: "workflow_design", label: "Workflow Design" },
+  { key: "operations",      label: "Operations" },
+  { key: "data_quality",    label: "Data Quality" },
 ] as const;
 
 export const blogTags = [
-  "CSV",
-  "Schema inference",
-  "Data quality",
-  "Validation",
-  "Exports",
-  "Quality control",
-  "Null handling",
-  "Analytics",
-  "Pipelines",
+  { key: "csv",              label: "CSV" },
+  { key: "schema_inference", label: "Schema Inference" },
+  { key: "data_quality",     label: "Data Quality" },
+  { key: "validation",       label: "Validation" },
+  { key: "exports",          label: "Exports" },
+  { key: "quality_control",  label: "Quality Control" },
+  { key: "null_handling",    label: "Null Handling" },
+  { key: "analytics",        label: "Analytics" },
+  { key: "pipelines",        label: "Pipelines" },
 ] as const;
 
-export type BlogCategory = (typeof blogCategories)[number];
-export type BlogTag = (typeof blogTags)[number];
+export type BlogCategory = (typeof blogCategories)[number]["key"];
+export type BlogTag      = (typeof blogTags)[number]["key"];
 
 export const POST_REGISTRY = [
   {
     id: "post-001",
     publishedAt: "2026-03-24",
-    category: "Workflow Design" as BlogCategory,
-    tags: ["CSV", "Schema inference", "Data quality"] as BlogTag[],
-    ogImage: "https://normalizeonline.com/blog/post-001-og.png",
+    category: "workflow_design" as BlogCategory,
+    tags: ["csv", "schema_inference", "data_quality"] as BlogTag[],
   },
   {
     id: "post-002",
     publishedAt: "2026-03-17",
-    category: "Operations" as BlogCategory,
-    tags: ["Validation", "Exports", "Quality control"] as BlogTag[],
-    ogImage: "https://normalizeonline.com/blog/post-002-og.png",
+    category: "operations" as BlogCategory,
+    tags: ["validation", "exports", "quality_control"] as BlogTag[],
   },
   {
     id: "post-003",
     publishedAt: "2026-03-09",
-    category: "Data Quality" as BlogCategory,
-    tags: ["Null handling", "Analytics", "Pipelines"] as BlogTag[],
-    ogImage: "https://normalizeonline.com/blog/post-003-og.png",
+    category: "data_quality" as BlogCategory,
+    tags: ["null_handling", "analytics", "pipelines"] as BlogTag[],
   },
 ] as const;
 
@@ -56,7 +53,6 @@ export type BlogPost = {
   publishedAt: string;
   category: BlogCategory;
   tags: BlogTag[];
-  ogImage: string;
 };
 
 type PostJson = {
@@ -85,8 +81,7 @@ export async function getBlogPosts(locale: Locale): Promise<BlogPost[]> {
         readingTime: json.readingTime,
         publishedAt: entry.publishedAt,
         category: entry.category,
-        tags: entry.tags,
-        ogImage: entry.ogImage,
+        tags: [...entry.tags],
       } satisfies BlogPost;
     }),
   );
@@ -125,8 +120,7 @@ export async function loadPost(
       readingTime: json.readingTime,
       publishedAt: entry.publishedAt,
       category: entry.category,
-      tags: entry.tags,
-      ogImage: entry.ogImage,
+      tags: [...entry.tags],
     },
     tocItems: json.headings.map((title, i) => ({ id: `s${i + 1}`, title })),
     t: (key: string) =>
@@ -140,11 +134,34 @@ export async function getRelatedPosts(
   limit = 2,
 ): Promise<BlogPost[]> {
   const all = await getBlogPosts(locale);
-  return all.filter((p) => p.id !== id).slice(0, limit);
+  const current = POST_REGISTRY.find((e) => e.id === id)!;
+  const others = all.filter((p) => p.id !== id);
+
+  const sameCategory = others.filter((p) => p.category === current.category);
+
+  if (sameCategory.length >= limit) {
+    return sameCategory.slice(0, limit);
+  }
+
+  const needed = limit - sameCategory.length;
+  const byTagOverlap = others
+    .filter((p) => p.category !== current.category)
+    .sort(
+      (a, b) =>
+        b.tags.filter((t) => (current.tags as readonly string[]).includes(t)).length -
+        a.tags.filter((t) => (current.tags as readonly string[]).includes(t)).length,
+    )
+    .slice(0, needed);
+
+  return [...sameCategory, ...byTagOverlap];
 }
 
 export function getAllPostParams() {
   return POST_REGISTRY.map(({ id }) => id);
+}
+
+export function postOgImage(id: PostId): string {
+  return `/blog/og/${id}-og.png`;
 }
 
 function getNestedValue(obj: Record<string, unknown>, path: string): string {
@@ -158,10 +175,6 @@ function getNestedValue(obj: Record<string, unknown>, path: string): string {
       obj,
     );
   return typeof result === "string" ? result : "";
-}
-
-export function tKey(value: string): string {
-  return value.toLowerCase().replace(/\s+/g, "_");
 }
 
 export function formatBlogDate(value: string, locale: Locale = "en"): string {

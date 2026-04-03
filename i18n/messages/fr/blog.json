@@ -45,7 +45,11 @@
     },
     "related": {
       "eyebrow": "Autres articles",
-      "heading": "Continuez à affiner le flux de travail.",
+      "heading": {
+        "workflow_design": "Continuez à affiner votre façon de construire.",
+        "operations": "Continuez à affiner le flux de travail.",
+        "data_quality": "Continuez à améliorer la qualité de vos données."
+      },
       "viewAll": "Voir tous les articles"
     }
   },

@@ -9,6 +9,7 @@ import {
   loadPost,
   getRelatedPosts,
   resolveSlugToId,
+  postOgImage,
   type PostId,
 } from "@/app/lib/blog";
 
@@ -53,7 +54,7 @@ export async function generateMetadata({ params }: PageParams) {
     description: post.description,
     ogType: "article",
     publishedTime: post.publishedAt,
-    ogImage: post.ogImage,
+    ogImage: postOgImage(post.id),
   });
 }
 
@@ -75,7 +76,7 @@ export default async function BlogPostPage({ params }: PageParams) {
     "@type": "BlogPosting",
     headline: post.title,
     description: post.description,
-    image: post.ogImage,
+    image: buildUrl(postOgImage(post.id)),
     datePublished: post.publishedAt,
     dateModified: post.publishedAt,
     url: postUrl,
@@ -102,6 +103,13 @@ export default async function BlogPostPage({ params }: PageParams) {
         locale={locale as Locale}
         t={blogT}
         relatedPosts={relatedPosts}
+        cta={{
+          eyebrow: blogT("article.cta.eyebrow"),
+          heading: blogT("article.cta.heading"),
+          description: blogT("article.cta.description"),
+          primaryAction: { label: blogT("article.cta.openNormalize"), href: "/" },
+          secondaryAction: { label: blogT("article.cta.browseArticles"), href: "/blog" },
+        }}
       >
         <Content t={t} />
       </BlogArticleLayout>
