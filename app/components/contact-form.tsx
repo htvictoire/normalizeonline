@@ -1,35 +1,27 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import { z } from "zod";
 
 const MIN_MESSAGE = 10;
 
 const schema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.email("Invalid email address"),
+  name: z.string().min(1),
+  email: z.email(),
   topic: z.enum([
     "Privacy & data protection",
     "Legal inquiry",
     "Bug report",
     "Feature request",
     "Other",
-  ], { error: "Please select a topic" }),
-  message: z.string().min(MIN_MESSAGE, `Message must be at least ${MIN_MESSAGE} characters`),
+  ]),
+  message: z.string().min(MIN_MESSAGE),
 });
 
 type Fields = z.infer<typeof schema>;
 type FieldErrors = Partial<Record<keyof Fields, string>>;
-
-const topics = [
-  { value: "", label: "Select a topic" },
-  { value: "Privacy & data protection", label: "Privacy & data protection" },
-  { value: "Legal inquiry", label: "Legal inquiry" },
-  { value: "Bug report", label: "Bug report" },
-  { value: "Feature request", label: "Feature request" },
-  { value: "Other", label: "Other" },
-];
 
 const inputClass = (error?: string) =>
   `rounded-md border bg-canvas px-3 py-2 text-sm text-ink placeholder:text-ink-muted focus:outline-none ${
@@ -37,12 +29,22 @@ const inputClass = (error?: string) =>
   }`;
 
 export default function ContactForm() {
+  const t = useTranslations("contact");
   const router = useRouter();
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [serverError, setServerError] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
   const [messageLength, setMessageLength] = useState(0);
+
+  const topics = [
+    { value: "", label: t("form.topicPlaceholder") },
+    { value: "Privacy & data protection", label: t("form.topics.privacy") },
+    { value: "Legal inquiry", label: t("form.topics.legal") },
+    { value: "Bug report", label: t("form.topics.bug") },
+    { value: "Feature request", label: t("form.topics.feature") },
+    { value: "Other", label: t("form.topics.other") },
+  ];
 
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -62,7 +64,12 @@ export default function ContactForm() {
       const errors: FieldErrors = {};
       for (const issue of parsed.error.issues) {
         const key = issue.path[0] as keyof Fields;
-        if (!errors[key]) errors[key] = issue.message;
+        if (!errors[key]) {
+          if (key === "name") errors[key] = t("form.nameRequired");
+          else if (key === "email") errors[key] = t("form.emailInvalid");
+          else if (key === "topic") errors[key] = t("form.topicRequired");
+          else if (key === "message") errors[key] = t("form.messageMin", { min: MIN_MESSAGE });
+        }
       }
       setFieldErrors(errors);
       return;
@@ -79,7 +86,7 @@ export default function ContactForm() {
       setShowSuccess(true);
     } else {
       const json = await res.json();
-      setServerError(json.error ?? "Something went wrong. Please try again.");
+      setServerError(json.error ?? t("form.serverError"));
       setStatus("idle");
     }
   }
@@ -89,23 +96,23 @@ export default function ContactForm() {
       <form onSubmit={handleSubmit} className="mt-6 space-y-5" noValidate>
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="name" className="text-xs font-medium text-ink">Name</label>
+            <label htmlFor="name" className="text-xs font-medium text-ink">{t("form.name")}</label>
             <input
               id="name"
               name="name"
               type="text"
-              placeholder="Your name"
+              placeholder={t("form.namePlaceholder")}
               className={inputClass(fieldErrors.name)}
             />
             {fieldErrors.name && <span className="block text-xs text-error">{fieldErrors.name}</span>}
           </div>
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="email" className="text-xs font-medium text-ink">Email</label>
+            <label htmlFor="email" className="text-xs font-medium text-ink">{t("form.email")}</label>
             <input
               id="email"
               name="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder={t("form.emailPlaceholder")}
               className={inputClass(fieldErrors.email)}
             />
             {fieldErrors.email && <span className="block text-xs text-error">{fieldErrors.email}</span>}
@@ -113,16 +120,16 @@ export default function ContactForm() {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="topic" className="text-xs font-medium text-ink">Topic</label>
+          <label htmlFor="topic" className="text-xs font-medium text-ink">{t("form.topic")}</label>
           <select
             id="topic"
             name="topic"
             defaultValue=""
             className={inputClass(fieldErrors.topic)}
           >
-            {topics.map((t) => (
-              <option key={t.value} value={t.value} disabled={t.value === ""}>
-                {t.label}
+            {topics.map((tp) => (
+              <option key={tp.value} value={tp.value} disabled={tp.value === ""}>
+                {tp.label}
               </option>
             ))}
           </select>
@@ -130,12 +137,12 @@ export default function ContactForm() {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="message" className="text-xs font-medium text-ink">Message</label>
+          <label htmlFor="message" className="text-xs font-medium text-ink">{t("form.message")}</label>
           <textarea
             id="message"
             name="message"
             rows={6}
-            placeholder="Describe your question or issue in detail..."
+            placeholder={t("form.messagePlaceholder")}
             onChange={(e) => setMessageLength(e.target.value.length)}
             className={`${inputClass(fieldErrors.message)} resize-none`}
           />
@@ -144,9 +151,7 @@ export default function ContactForm() {
               ? <span className="block text-xs text-error">{fieldErrors.message}</span>
               : <span />
             }
-            <span className="text-xs text-ink-muted">
-              {messageLength}
-            </span>
+            <span className="text-xs text-ink-muted">{messageLength}</span>
           </div>
         </div>
 
@@ -157,7 +162,7 @@ export default function ContactForm() {
           disabled={status === "loading"}
           className="rounded-md border border-brand px-6 py-2.5 text-sm font-medium text-brand hover:border-ink hover:text-ink disabled:opacity-50"
         >
-          {status === "loading" ? "Sending…" : "Send message"}
+          {status === "loading" ? t("form.sending") : t("form.send")}
         </button>
       </form>
 
@@ -169,15 +174,13 @@ export default function ContactForm() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h2 className="mt-4 text-lg font-semibold text-ink">Message sent</h2>
-            <p className="mt-2 text-sm text-ink-muted">
-              We received your message and will get back to you as soon as possible.
-            </p>
+            <h2 className="mt-4 text-lg font-semibold text-ink">{t("success.heading")}</h2>
+            <p className="mt-2 text-sm text-ink-muted">{t("success.description")}</p>
             <button
               onClick={() => router.push("/")}
               className="mt-6 w-full rounded-md border border-brand px-6 py-2.5 text-sm font-medium text-brand hover:border-ink hover:text-ink"
             >
-              Back to home
+              {t("success.backToHome")}
             </button>
           </div>
         </div>

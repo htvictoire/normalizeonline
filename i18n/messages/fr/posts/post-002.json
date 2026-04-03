@@ -1,0 +1,31 @@
+{
+  "slug": "verifications-colonnes-avant-export",
+  "title": "Sept vérifications au niveau des colonnes avant d'exporter un jeu de données propre",
+  "description": "La liste de contrôle que nous utilisons pour détecter les erreurs de normalisation les plus coûteuses avant qu'elles ne quittent le navigateur.",
+  "readingTime": "5 min de lecture",
+  "headings": [
+    "Une petite liste de contrôle évite les reprises coûteuses",
+    "Ce qu'il faut vérifier à chaque fois",
+    "Utiliser la révision pour réduire l'ambiguïté, pas seulement les erreurs"
+  ],
+  "content": {
+    "s1": {
+      "p1": "La plupart des exports cassés ne sont pas causés par des défaillances spectaculaires. Ils proviennent d'une hypothèse non vérifiée dans une colonne qui semblait inoffensive lors d'une vérification rapide.",
+      "p2": "Une révision légère avant l'export maintient ce risque gérable et rend le fichier résultant beaucoup plus facile à valider."
+    },
+    "s2": {
+      "p1": "Parcourez les mêmes vérifications au niveau des colonnes quel que soit le type de fichier. L'objectif est la cohérence, pas l'ingéniosité.",
+      "li1": "Type : confirmez que le type inféré correspond au sens métier réel.",
+      "li2": "Format : vérifiez les conventions de date, nombre, devise et pourcentage.",
+      "li3": "Valeurs nulles : inspectez les blancs, les espaces réservés et les valeurs sentinelles comme NA ou tiret.",
+      "li4": "Plages : repérez les valeurs aberrantes, les valeurs impossibles et les nombres négatifs là où ils ne devraient pas exister.",
+      "li5": "Catégories : vérifiez la casse, la dérive orthographique et les labels en double qui devraient être regroupés.",
+      "li6": "Identifiants : préservez les zéros de tête et ne coercez pas les clés en nombres.",
+      "li7": "Forme de sortie : confirmez que la représentation exportée correspond à ce qu'attendent les outils en aval."
+    },
+    "s3": {
+      "p1": "Une étape de révision solide fait plus que trouver des lignes malformées. Elle met en surface l'incertitude. Si une colonne peut raisonnablement être interprétée de deux façons, c'est exactement le moment de faire une pause et de définir la règle explicitement.",
+      "p2": "L'export le plus propre est celui qui laisse le moins de décisions à la prochaine personne ou au prochain service dans la chaîne."
+    }
+  }
+}

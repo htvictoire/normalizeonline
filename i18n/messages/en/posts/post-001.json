@@ -1,0 +1,33 @@
+{
+  "slug": "normalize-csv-without-losing-meaning",
+  "title": "How to normalize CSV data without losing meaning",
+  "description": "A practical workflow for cleaning inconsistent CSVs while preserving the semantics analysts and downstream systems actually depend on.",
+  "readingTime": "6 min read",
+  "headings": [
+    "Start with the meaning of each column",
+    "Separate detection from approval",
+    "Normalize values only after the rules are stable",
+    "Export with an explicit contract"
+  ],
+  "content": {
+    "s1": {
+      "p1": "Normalization fails when teams begin with file syntax instead of business meaning. A date-like string can represent an invoice date, a service period, or a contract renewal window. Those are not interchangeable even when the raw values look similar.",
+      "p2": "Before changing formats, decide what each column is supposed to represent and which values are acceptable. That gives every later transformation a stable target instead of a best-effort guess.",
+      "li1": "Name the semantic type you expect for every column.",
+      "li2": "Record whether blanks, placeholders, and mixed units are allowed.",
+      "li3": "Document the output format you want before you export."
+    },
+    "s2": {
+      "p1": "Automated inference is useful because it accelerates triage, but it should not be treated as the final truth. The safe pattern is to sample the data, suggest likely types and formats, then require a human decision before applying a full-dataset transformation.",
+      "p2": "That approval step is where you catch localized date formats, overloaded identifiers, and the one sales column that mixes percentages with free-text notes."
+    },
+    "s3": {
+      "p1": "Once the column contract is clear, normalize cell values into the confirmed target types. This is where you standardize null tokens, trim whitespace, unify decimal and thousands separators, and convert booleans or dates into a single agreed representation.",
+      "p2": "Doing this after review prevents the common failure mode where a tool eagerly rewrites data and silently erases context you needed to keep."
+    },
+    "s4": {
+      "p1": "A clean file is not just a valid file. It should carry predictable shapes, formats, and parse behavior so that the next system does not need to guess again.",
+      "p2": "Treat the export configuration as part of the dataset contract. If you can explain the output schema in one pass, the normalization step did its job."
+    }
+  }
+}

@@ -1,24 +1,30 @@
-import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
+import { type Locale } from "@/i18n/config";
+import { buildMetadata } from "@/i18n/seo";
 import LegalPage from "@/app/components/legal-page";
 
-export const metadata: Metadata = {
-  title: "Privacy Policy",
-  description:
-    "How Normalize handles your data: ephemeral file processing, no user accounts, no analytics, EU-only infrastructure, and an open-source engine.",
-  alternates: { canonical: "https://normalizeonline.com/privacy" },
-  openGraph: {
-    title: "Privacy Policy | Normalize",
-    description:
-      "How Normalize handles your data: ephemeral file processing, no user accounts, no analytics, EU-only infrastructure, and an open-source engine.",
-    url: "https://normalizeonline.com/privacy",
-  },
-  robots: { index: true, follow: false },
-};
+type PageParams = { readonly params: Promise<{ readonly locale: string }> };
 
-export default function PrivacyPolicy() {
+export async function generateMetadata({ params }: PageParams) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "privacy" });
+  return buildMetadata({
+    route: "PRIVACY",
+    locale: locale as Locale,
+    title: t("seo.title"),
+    description: t("seo.description"),
+    ogTitle: t("seo.ogTitle"),
+    ogDescription: t("seo.ogDescription"),
+  });
+}
+
+export default async function PrivacyPolicy({ params }: PageParams) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "privacy" });
+
   return (
-    <LegalPage title="Privacy Policy" lastUpdated="March 28, 2026">
+    <LegalPage title={t("page.title")} lastUpdated={t("page.lastUpdated")}>
       <h2>1. Who We Are</h2>
       <p>
         Normalize is a data normalization tool that transforms raw tabular files — CSV, Excel, and
@@ -97,20 +103,10 @@ export default function PrivacyPolicy() {
 
       <h2>6. Data Retention</h2>
       <ul>
-        <li>
-          <strong>Source files:</strong> Deleted immediately after normalization completes.
-        </li>
-        <li>
-          <strong>Output artifacts:</strong> Automatically deleted after 1 hour.
-        </li>
-        <li>
-          <strong>Server logs:</strong> Retained briefly for security purposes, not used for
-          analytics.
-        </li>
-        <li>
-          <strong>Contact form submissions:</strong> Retained only as long as needed to resolve
-          your inquiry.
-        </li>
+        <li><strong>Source files:</strong> Deleted immediately after normalization completes.</li>
+        <li><strong>Output artifacts:</strong> Automatically deleted after 1 hour.</li>
+        <li><strong>Server logs:</strong> Retained briefly for security purposes, not used for analytics.</li>
+        <li><strong>Contact form submissions:</strong> Retained only as long as needed to resolve your inquiry.</li>
       </ul>
 
       <h2>7. Infrastructure and Data Residency</h2>

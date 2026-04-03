@@ -1,0 +1,42 @@
+{
+  "seo": {
+    "title": "Contact",
+    "description": "Contactez l'équipe Normalize — questions de confidentialité, questions juridiques, signalements de bugs ou demandes de fonctionnalités.",
+    "ogTitle": "Contact | Normalize",
+    "ogDescription": "Contactez l'équipe Normalize — questions de confidentialité, questions juridiques, signalements de bugs ou demandes de fonctionnalités."
+  },
+  "page": {
+    "title": "Contact",
+    "lastUpdated": "28 mars 2026",
+    "intro": "Utilisez le formulaire ci-dessous pour nous contacter. Nous vous répondrons dans les plus brefs délais."
+  },
+  "form": {
+    "name": "Nom",
+    "namePlaceholder": "Votre nom",
+    "nameRequired": "Le nom est requis",
+    "email": "Adresse e-mail",
+    "emailPlaceholder": "vous@exemple.com",
+    "emailInvalid": "Adresse e-mail invalide",
+    "topic": "Sujet",
+    "topicPlaceholder": "Choisissez un sujet",
+    "topicRequired": "Veuillez sélectionner un sujet",
+    "message": "Message",
+    "messagePlaceholder": "Décrivez votre question ou problème en détail...",
+    "messageMin": "Le message doit comporter au moins {min} caractères",
+    "send": "Envoyer le message",
+    "sending": "Envoi en cours…",
+    "serverError": "Une erreur s'est produite. Veuillez réessayer.",
+    "topics": {
+      "privacy": "Confidentialité et protection des données",
+      "legal": "Demande juridique",
+      "bug": "Signalement de bug",
+      "feature": "Demande de fonctionnalité",
+      "other": "Autre"
+    }
+  },
+  "success": {
+    "heading": "Message envoyé",
+    "description": "Nous avons bien reçu votre message et vous répondrons dans les plus brefs délais.",
+    "backToHome": "Retour à l'accueil"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "slug": "jetons-nuls-brisent-pipelines",
+  "title": "Pourquoi les jetons nuls locaux brisent silencieusement les pipelines analytiques",
+  "description": "Les chaînes vides ne sont que le début. Les équipes héritent aussi d'espaces réservés spécifiques au domaine qui doivent être normalisés avant que les métriques et les jointures deviennent fiables.",
+  "readingTime": "4 min de lecture",
+  "headings": [
+    "Les données manquantes ont plus d'une orthographe",
+    "Les dégâts apparaissent en aval",
+    "Normaliser les valeurs nulles comme règle de premier ordre"
+  ],
+  "content": {
+    "s1": {
+      "p1": "Les jeux de données opérationnels utilisent rarement une seule représentation nulle. Vous verrez des chaînes vides, des tirets, du texte d'espace réservé, des dates impossibles et des valeurs comme inconnu ou en attente selon le système qui a produit la ligne.",
+      "p2": "Ces jetons survivent souvent à l'ingestion et créent des problèmes subtils plus tard, quand les analystes supposent qu'une colonne est propre parce qu'elle ne contient pas de valeurs SQL NULL réelles."
+    },
+    "s2": {
+      "p1": "Quand les jetons d'espace réservé sont laissés intacts, les agrégats dérivent, les filtres ratent des enregistrements et les jointures échouent de façon difficile à expliquer. Une colonne de statut avec à la fois des valeurs vides et non disponible ne manque pas d'une façon cohérente. C'est une dette de qualité de données fragmentée.",
+      "p2": "C'est particulièrement problématique quand un outil en aval traite chaque espace réservé comme une catégorie valide plutôt que comme une information absente."
+    },
+    "s3": {
+      "p1": "La gestion des valeurs nulles doit faire partie de la configuration des colonnes, pas être une correction après coup. Définissez quels jetons comptent comme manquants avant de transformer l'ensemble du jeu de données, et appliquez cette règle de façon cohérente dans tous les formats d'export.",
+      "p2": "Une fois que l'absence est normalisée, le profilage, la validation et les métriques de qualité deviennent beaucoup plus fiables.",
+      "li1": "Identifiez tous les jetons d'espace réservé dans l'échantillon.",
+      "li2": "Décidez si chaque jeton signifie manquant, invalide ou en attente.",
+      "li3": "Mappez l'absence réelle vers une représentation cohérente dans la sortie."
+    }
+  }
+}

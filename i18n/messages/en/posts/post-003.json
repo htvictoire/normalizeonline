@@ -1,0 +1,28 @@
+{
+  "slug": "null-tokens-break-analytics",
+  "title": "Why local null tokens quietly break analytics pipelines",
+  "description": "Blank strings are only the start. Teams also inherit domain-specific placeholders that need to be normalized before metrics and joins become reliable.",
+  "readingTime": "4 min read",
+  "headings": [
+    "Missing data has more than one spelling",
+    "The damage shows up downstream",
+    "Normalize nulls as a first-class rule"
+  ],
+  "content": {
+    "s1": {
+      "p1": "Operational datasets rarely use a single null representation. You will see empty strings, dashes, placeholder text, impossible dates, and values like unknown or pending depending on which system produced the row.",
+      "p2": "Those tokens often survive ingestion and create subtle problems later when analysts assume a column is clean because it has no actual SQL NULL values."
+    },
+    "s2": {
+      "p1": "When placeholder tokens are left untouched, aggregates drift, filters miss records, and joins fail in ways that are difficult to explain. A status column with both blank and not available values is not missing in one consistent way. It is fragmented data quality debt.",
+      "p2": "This is especially painful when a downstream tool treats each placeholder as a valid category instead of absent information."
+    },
+    "s3": {
+      "p1": "Null handling should be part of column configuration, not a cleanup afterthought. Define which tokens count as missing before you transform the full dataset, and apply that rule consistently across export formats.",
+      "p2": "Once missingness is normalized, profiling, validation, and quality metrics become much more trustworthy.",
+      "li1": "Identify all placeholder tokens in the sample set.",
+      "li2": "Decide whether each token means missing, invalid, or pending.",
+      "li3": "Map true missingness to one consistent representation in the output."
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "index": {
+    "seo": {
+      "title": "Blog | Normalize – Data Normalization for Structured Files",
+      "description": "Practical writing on CSV cleaning, Excel normalization, null handling, date and time format conflicts, and making structured data safe for analytics and ingestion.",
+      "ogTitle": "Normalize Blog – Structured Data, Made Reliable",
+      "ogDescription": "Practical writing on CSV cleaning, Excel normalization, null handling, date and time format conflicts, and making structured data safe for analytics and ingestion."
+    },
+    "hero": {
+      "headline": "When data arrives broken, the pipeline pays for it. Here's how to fix it upstream.",
+      "description": "Writing on the real problems inside structured datasets — mixed date & time formats, inconsistent null tokens, column types that only look correct, and spreadsheet exports that break quietly. Each article covers a specific normalization problem and how to resolve it before it reaches your analytics, database, or any workflow."
+    }
+  },
+  "directory": {
+    "search": "Search articles",
+    "topic": "Topic",
+    "allCategories": "All categories",
+    "tags": "Tags",
+    "allTags": "All tags",
+    "orderBy": "Order by",
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "titleAZ": "Title A-Z",
+    "titleZA": "Title Z-A",
+    "filters": "Open filters",
+    "noResults": {
+      "heading": "No articles match those filters.",
+      "description": "Try a broader search term or clear one of the selected topics or tags."
+    }
+  },
+  "article": {
+    "backToBlog": "Back to blog",
+    "articleDetails": "Article Details",
+    "published": "Published",
+    "readingTime": "Reading time",
+    "category": "Category",
+    "tags": "Tags",
+    "inThisArticle": "In This Article",
+    "cta": {
+      "eyebrow": "Apply It",
+      "heading": "Review the column rules before you transform the entire file.",
+      "description": "Normalize is built around that workflow: inspect a sample, confirm the meaning of each column, then export a clean dataset with explicit output settings.",
+      "openNormalize": "Open Normalize",
+      "browseArticles": "Browse more articles"
+    },
+    "related": {
+      "eyebrow": "More From The Blog",
+      "heading": "Keep tightening the workflow.",
+      "viewAll": "View all articles"
+    }
+  },
+  "categories": {
+    "workflow_design": "Workflow Design",
+    "operations": "Operations",
+    "data_quality": "Data Quality"
+  },
+  "tags": {
+    "csv": "CSV",
+    "schema_inference": "Schema inference",
+    "data_quality": "Data quality",
+    "validation": "Validation",
+    "exports": "Exports",
+    "quality_control": "Quality control",
+    "null_handling": "Null handling",
+    "analytics": "Analytics",
+    "pipelines": "Pipelines"
+  },
+  "readArticle": "Read article",
+  "notFound": {
+    "eyebrow": "Blog",
+    "heading": "That article does not exist.",
+    "description": "The link may be outdated, or the post may have moved. Start again from the blog index.",
+    "backToBlog": "Back to blog",
+    "openNormalize": "Open Normalize"
+  }
+}
