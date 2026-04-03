@@ -35,8 +35,8 @@ export default function Header() {
   }, [mobileOpen]);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-canvas">
-      <div className="hidden md:block">
+    <header className="sticky top-0 z-40 w-full border-b border-border bg-canvas">
+      <div className="hidden min-[820px]:block">
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-8 px-6">
           <Link href="/">
             <Image src="/normalizelogo.png" alt="Normalize" height={28} width={140} priority />
@@ -66,16 +66,16 @@ export default function Header() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 md:hidden">
+      <div className="w-full px-4 sm:px-6 min-[820px]:hidden">
         <div className="flex min-h-14 items-center justify-between gap-4 py-3">
           <Link href="/">
             <Image
               src="/normalizelogo.png"
               alt="Normalize"
-              height={28}
-              width={140}
+              height={22}
+              width={110}
               priority
-              className="h-6 w-auto"
+              className="h-[22px] w-auto sm:h-[26px]"
             />
           </Link>
           <button
@@ -99,7 +99,7 @@ export default function Header() {
         {mobileOpen ? (
           <div
             id="mobile-nav"
-            className="fixed inset-0 z-50 md:hidden"
+            className="fixed inset-0 z-50 min-[820px]:hidden"
             role="dialog"
             aria-modal="true"
             aria-label="Navigation menu"
@@ -116,10 +116,10 @@ export default function Header() {
                   <Image
                     src="/normalizelogo.png"
                     alt="Normalize"
-                    height={28}
-                    width={140}
+                    height={22}
+                    width={110}
                     priority
-                    className="h-6 w-auto"
+                    className="h-[22px] w-auto sm:h-[26px]"
                   />
                 </Link>
                 <button

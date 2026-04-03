@@ -45,7 +45,11 @@
     },
     "related": {
       "eyebrow": "More From The Blog",
-      "heading": "Keep tightening the workflow.",
+      "heading": {
+        "workflow_design": "Keep refining how you build.",
+        "operations": "Keep tightening the workflow.",
+        "data_quality": "Keep raising your data quality."
+      },
       "viewAll": "View all articles"
     }
   },

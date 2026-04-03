@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import BlogArticleToc from "@/app/components/blog/article-toc";
-import { type BlogPost, formatBlogDate, tKey } from "@/app/lib/blog";
+import { type BlogPost, formatBlogDate } from "@/app/lib/blog";
 import { type Locale } from "@/i18n/config";
 
 type Props = {
@@ -57,28 +57,14 @@ export default function ArticleMobileNav({ post, tocItems, locale }: Props) {
           open ? "translate-y-0" : "translate-y-full"
         }`}
       >
-        {/* Drag handle */}
-        <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-border" />
-
-        {/* Close */}
+        {/* Drag handle — tap to close */}
         <button
           type="button"
           onClick={() => setOpen(false)}
           aria-label="Close"
-          className="absolute right-5 top-5 flex h-8 w-8 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-border hover:text-ink"
+          className="mx-auto mb-5 flex h-5 w-full items-center justify-center"
         >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-4 w-4"
-            aria-hidden="true"
-          >
-            <path d="M18 6 6 18M6 6l12 12" />
-          </svg>
+          <span className="h-1 w-10 rounded-full bg-border" />
         </button>
 
         <div className="space-y-8">
@@ -101,7 +87,7 @@ export default function ArticleMobileNav({ post, tocItems, locale }: Props) {
               <div>
                 <dt className="text-ink-muted">{t("article.category")}</dt>
                 <dd className="mt-1 font-medium text-ink">
-                  {t(`categories.${tKey(post.category)}`)}
+                  {t(`categories.${post.category}`)}
                 </dd>
               </div>
               <div>
@@ -112,7 +98,7 @@ export default function ArticleMobileNav({ post, tocItems, locale }: Props) {
                       key={tag}
                       className="rounded-full border border-border px-3 py-1 text-xs font-medium text-ink-muted"
                     >
-                      {t(`tags.${tKey(tag)}`)}
+                      {t(`tags.${tag}`)}
                     </span>
                   ))}
                 </dd>

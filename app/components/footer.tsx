@@ -6,10 +6,10 @@ export default async function Footer() {
   const t = await getTranslations("footer");
 
   return (
-    <footer className="mt-auto border-t border-border bg-canvas">
-      <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-6 text-center md:flex-row md:items-center md:justify-between md:gap-8 md:px-6 md:text-left">
+    <footer className="mt-auto w-full border-t border-border bg-canvas">
+      <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-4 px-4 py-6 text-center md:flex-row md:items-center md:justify-between md:gap-8 md:px-6 md:text-left">
         <Link href="/">
-          <Image src="/normalizelogo.png" alt="Normalize" height={22} width={110} />
+          <Image src="/normalizelogo.png" alt="Normalize" height={28} width={140} className="h-7 w-auto" />
         </Link>
         <p className="max-w-xs text-xs text-ink-muted md:max-w-none">
           {t("tagline")}
