@@ -1,0 +1,33 @@
+{
+  "slug": "normaliser-csv-sans-perdre-le-sens",
+  "title": "Comment normaliser des données CSV sans perdre leur sens",
+  "description": "Un flux de travail pratique pour nettoyer des CSV incohérents tout en préservant la sémantique dont dépendent les analystes et les systèmes en aval.",
+  "readingTime": "6 min de lecture",
+  "headings": [
+    "Commencer par le sens de chaque colonne",
+    "Séparer la détection de l'approbation",
+    "Normaliser les valeurs uniquement une fois les règles stables",
+    "Exporter avec un contrat explicite"
+  ],
+  "content": {
+    "s1": {
+      "p1": "La normalisation échoue quand les équipes commencent par la syntaxe du fichier plutôt que par son sens métier. Une chaîne ressemblant à une date peut représenter une date de facture, une période de service ou une fenêtre de renouvellement de contrat. Ces valeurs ne sont pas interchangeables même si elles se ressemblent en brut.",
+      "p2": "Avant de changer les formats, décidez ce que chaque colonne est censée représenter et quelles valeurs sont acceptables. Cela donne à chaque transformation ultérieure une cible stable plutôt qu'une supposition au mieux.",
+      "li1": "Nommez le type sémantique attendu pour chaque colonne.",
+      "li2": "Notez si les blancs, les espaces réservés et les unités mixtes sont autorisés.",
+      "li3": "Documentez le format de sortie souhaité avant d'exporter."
+    },
+    "s2": {
+      "p1": "L'inférence automatisée est utile car elle accélère le triage, mais elle ne doit pas être considérée comme la vérité finale. Le bon modèle consiste à échantillonner les données, suggérer les types et formats probables, puis exiger une décision humaine avant d'appliquer une transformation sur l'ensemble du jeu de données.",
+      "p2": "Cette étape d'approbation est celle où vous repérez les formats de date localisés, les identifiants surchargés et la colonne commerciale qui mélange pourcentages et notes en texte libre."
+    },
+    "s3": {
+      "p1": "Une fois le contrat de colonne établi, normalisez les valeurs des cellules vers les types cibles confirmés. C'est là que vous standardisez les jetons nuls, supprimez les espaces superflus, unifiez les séparateurs décimaux et de milliers, et convertissez les booléens ou les dates en une représentation unique et convenue.",
+      "p2": "Faire cela après la révision prévient l'échec courant où un outil réécrit les données de manière agressive en effaçant silencieusement le contexte dont vous aviez besoin."
+    },
+    "s4": {
+      "p1": "Un fichier propre n'est pas seulement un fichier valide. Il doit offrir des formes, des formats et un comportement d'analyse prévisibles pour que le système suivant n'ait pas à deviner à nouveau.",
+      "p2": "Traitez la configuration d'export comme faisant partie du contrat du jeu de données. Si vous pouvez expliquer le schéma de sortie en une seule passe, l'étape de normalisation a rempli son rôle."
+    }
+  }
+}

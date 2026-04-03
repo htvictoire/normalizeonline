@@ -1,0 +1,37 @@
+{
+  "seo": {
+    "title": "Normalize — Transformez vos fichiers en données propres",
+    "description": "Importez un fichier CSV, Excel ou JSON. Normalize analyse vos données et suggère comment les interpréter — types de colonnes, formats et jetons nuls. Vous confirmez et ajustez par colonne, définissez vos préférences de sortie et téléchargez un jeu de données propre en CSV, JSON ou Parquet.",
+    "ogTitle": "Normalize — Transformez vos fichiers en données propres",
+    "ogDescription": "Importez un fichier CSV, Excel ou JSON. Normalize suggère comment interpréter vos données — vous confirmez, ajustez par colonne et exportez en CSV, JSON ou Parquet."
+  },
+  "headline": "Transformez vos fichiers désordonnés en données propres.",
+  "steps": {
+    "upload": {
+      "title": "Importer",
+      "desc": "Chargez un fichier CSV, Excel ou JSON dans Normalize."
+    },
+    "confirm": {
+      "title": "Confirmer la structure",
+      "desc": "Normalize détecte les types de colonnes, les jetons et les formats. Vous ajustez comment les données doivent être interprétées."
+    },
+    "output": {
+      "title": "Paramètres de sortie",
+      "desc": "Choisissez comment les données normalisées doivent être produites : format, styles de date, jetons et autres règles."
+    },
+    "download": {
+      "title": "Télécharger",
+      "desc": "Exportez le jeu de données normalisé en CSV, Excel, JSON ou Parquet."
+    }
+  },
+  "waitlist": {
+    "heading": "Soyez parmi les premiers à l'essayer.",
+    "description": "Laissez votre adresse e-mail et nous vous contacterons dès que l'accès est ouvert.",
+    "placeholder": "votre@email.com",
+    "cta": "Accès anticipé",
+    "sending": "…",
+    "success": "Vous êtes sur la liste — nous vous contacterons bientôt.",
+    "error": "Adresse e-mail invalide",
+    "serverError": "Une erreur s'est produite."
+  }
+}

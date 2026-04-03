@@ -1,22 +1,23 @@
-import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+import { type Locale } from "@/i18n/config";
+import { buildMetadata } from "@/i18n/seo";
 import Steps from "@/app/components/home/steps";
 import UploadPad from "@/app/components/home/upload-pad";
 
-export const metadata: Metadata = {
-  title: "Normalize — Turn messy files into clean data",
-  description:
-    "Upload a CSV, Excel, or JSON file. Normalize samples your data and suggests how to interpret it — column types, formats, and null tokens. You confirm and adjust per column, set output preferences, and download a clean dataset as CSV, JSON, or Parquet.",
-  alternates: {
-    canonical: "https://normalizeonline.com",
-  },
-  openGraph: {
-    title: "Normalize — Turn messy files into clean data",
-    description:
-      "Upload a CSV, Excel, or JSON file. Normalize suggests how to interpret your data — you confirm, adjust per column, and export as CSV, JSON, or Parquet.",
-    url: "https://normalizeonline.com",
-    type: "website",
-  },
-};
+type PageParams = { readonly params: Promise<{ readonly locale: string }> };
+
+export async function generateMetadata({ params }: PageParams) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "home" });
+  return buildMetadata({
+    route: "HOME",
+    locale: locale as Locale,
+    title: t("seo.title"),
+    description: t("seo.description"),
+    ogTitle: t("seo.ogTitle"),
+    ogDescription: t("seo.ogDescription"),
+  });
+}
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -27,11 +28,7 @@ const jsonLd = {
     "Normalize is a user-driven data normalization workflow. Upload a CSV, Excel, or JSON file — Normalize samples your data and suggests how to interpret each column: type, format, null tokens, and more. You review the suggestion, adjust any column configuration, and confirm. You then choose how the output should be produced — date formats, number styles, output type — before downloading your clean dataset as CSV, JSON, or Parquet.",
   applicationCategory: "DeveloperApplication",
   operatingSystem: "Web",
-  offers: {
-    "@type": "Offer",
-    price: "0",
-    priceCurrency: "USD",
-  },
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
   featureList: [
     "CSV, Excel, and JSON ingestion",
     "Automatic column type and format inference",
@@ -49,7 +46,10 @@ const jsonLd = {
   ],
 };
 
-export default function Page() {
+export default async function HomePage({ params }: PageParams) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "home" });
+
   return (
     <>
       <script
@@ -58,7 +58,7 @@ export default function Page() {
       />
       <main className="mx-auto max-w-7xl px-4 py-6 md:px-6 md:py-8">
         <h1 className="mt-2 text-center text-4xl font-semibold tracking-tight text-ink sm:text-5xl md:mt-4 md:text-6xl">
-          Turn messy files into clean data.
+          {t("headline")}
         </h1>
         <section className="mt-10 md:mt-0">
           <Steps />

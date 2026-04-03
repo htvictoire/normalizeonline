@@ -1,24 +1,30 @@
-import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
+import { type Locale } from "@/i18n/config";
+import { buildMetadata } from "@/i18n/seo";
 import LegalPage from "@/app/components/legal-page";
 
-export const metadata: Metadata = {
-  title: "Data Protection",
-  description:
-    "Normalize is designed with data protection at its core — content-blind processing, ephemeral storage on EU infrastructure, no user tracking, and an open-source engine.",
-  alternates: { canonical: "https://normalizeonline.com/data-protection" },
-  openGraph: {
-    title: "Data Protection | Normalize",
-    description:
-      "Normalize is designed with data protection at its core — content-blind processing, ephemeral storage on EU infrastructure, no user tracking, and an open-source engine.",
-    url: "https://normalizeonline.com/data-protection",
-  },
-  robots: { index: true, follow: false },
-};
+type PageParams = { readonly params: Promise<{ readonly locale: string }> };
 
-export default function DataProtection() {
+export async function generateMetadata({ params }: PageParams) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "dataProtection" });
+  return buildMetadata({
+    route: "DATA_PROTECTION",
+    locale: locale as Locale,
+    title: t("seo.title"),
+    description: t("seo.description"),
+    ogTitle: t("seo.ogTitle"),
+    ogDescription: t("seo.ogDescription"),
+  });
+}
+
+export default async function DataProtection({ params }: PageParams) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "dataProtection" });
+
   return (
-    <LegalPage title="Data Protection" lastUpdated="March 28, 2026">
+    <LegalPage title={t("page.title")} lastUpdated={t("page.lastUpdated")}>
       <h2>1. Design Principle</h2>
       <p>
         Data protection is not a compliance afterthought at Normalize — it is an architectural
@@ -75,12 +81,8 @@ export default function DataProtection() {
       <h2>4. Infrastructure and Data Residency</h2>
       <p>All data processed by Normalize remains within the European Economic Area:</p>
       <ul>
-        <li>
-          <strong>Processing backend:</strong> Microsoft Azure, European region.
-        </li>
-        <li>
-          <strong>File storage:</strong> Cloudflare R2, European region.
-        </li>
+        <li><strong>Processing backend:</strong> Microsoft Azure, European region.</li>
+        <li><strong>File storage:</strong> Cloudflare R2, European region.</li>
       </ul>
       <p>
         No data is transferred outside the EEA at any point in the normalization workflow. There
@@ -118,12 +120,8 @@ export default function DataProtection() {
         to GDPR-compliant Data Processing Agreements:
       </p>
       <ul>
-        <li>
-          <strong>Microsoft Azure</strong> — backend compute (EU region).
-        </li>
-        <li>
-          <strong>Cloudflare R2</strong> — ephemeral file storage (EU region).
-        </li>
+        <li><strong>Microsoft Azure</strong> — backend compute (EU region).</li>
+        <li><strong>Cloudflare R2</strong> — ephemeral file storage (EU region).</li>
       </ul>
       <p>
         Neither sub-processor has access to file contents for any purpose other than storing and

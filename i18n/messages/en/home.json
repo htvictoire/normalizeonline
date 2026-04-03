@@ -1,0 +1,37 @@
+{
+  "seo": {
+    "title": "Normalize — Turn messy files into clean data",
+    "description": "Upload a CSV, Excel, or JSON file. Normalize samples your data and suggests how to interpret it — column types, formats, and null tokens. You confirm and adjust per column, set output preferences, and download a clean dataset as CSV, JSON, or Parquet.",
+    "ogTitle": "Normalize — Turn messy files into clean data",
+    "ogDescription": "Upload a CSV, Excel, or JSON file. Normalize suggests how to interpret your data — you confirm, adjust per column, and export as CSV, JSON, or Parquet."
+  },
+  "headline": "Turn messy files into clean data.",
+  "steps": {
+    "upload": {
+      "title": "Upload",
+      "desc": "Bring a CSV, Excel, or JSON file into Normalize."
+    },
+    "confirm": {
+      "title": "Confirm structure",
+      "desc": "Normalize detects column types, tokens, and formats. You adjust how the data should be understood."
+    },
+    "output": {
+      "title": "Output settings",
+      "desc": "Choose how the normalized data should be produced: format, date styles, tokens, and other rules."
+    },
+    "download": {
+      "title": "Download",
+      "desc": "Export the normalized dataset as CSV, Excel, JSON, or Parquet."
+    }
+  },
+  "waitlist": {
+    "heading": "Be the first to try it.",
+    "description": "Leave your email and we'll reach out as soon as access opens.",
+    "placeholder": "your@email.com",
+    "cta": "Get early access",
+    "sending": "…",
+    "success": "You're on the list — we'll be in touch.",
+    "error": "Invalid email address",
+    "serverError": "Something went wrong."
+  }
+}

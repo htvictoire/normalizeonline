@@ -1,77 +1,68 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-type ArticleTocItem = {
+type TocItem = {
   id: string;
   title: string;
 };
 
-type BlogArticleTocProps = {
-  items: ArticleTocItem[];
-};
-
-const sectionOffset = 120;
-
-export default function BlogArticleToc({ items }: BlogArticleTocProps) {
+export default function BlogArticleToc({
+  items,
+  onNavigate,
+}: {
+  items: TocItem[];
+  onNavigate?: () => void;
+}) {
   const [activeId, setActiveId] = useState(items[0]?.id ?? "");
+  const visibleRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
-    if (items.length === 0) {
-      return;
-    }
+    if (items.length === 0) return;
 
-    const sections = items
+    const elements = items
       .map((item) => document.getElementById(item.id))
-      .filter((section): section is HTMLElement => section instanceof HTMLElement);
+      .filter((el): el is HTMLElement => el !== null);
 
-    if (sections.length === 0) {
-      return;
-    }
+    if (elements.length === 0) return;
 
-    const updateActiveSection = () => {
-      let nextActiveId = sections[0].id;
-
-      for (const section of sections) {
-        if (section.getBoundingClientRect().top - sectionOffset <= 0) {
-          nextActiveId = section.id;
-          continue;
-        }
-
-        break;
-      }
-
-      setActiveId(nextActiveId);
+    const pick = () => {
+      const first = elements.find((el) => visibleRef.current.has(el.id));
+      if (first) setActiveId(first.id);
     };
 
-    updateActiveSection();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            visibleRef.current.add(entry.target.id);
+          } else {
+            visibleRef.current.delete(entry.target.id);
+          }
+        });
+        pick();
+      },
+      { rootMargin: "-80px 0px -40% 0px", threshold: 0 },
+    );
 
-    window.addEventListener("scroll", updateActiveSection, { passive: true });
-    window.addEventListener("resize", updateActiveSection);
-
-    return () => {
-      window.removeEventListener("scroll", updateActiveSection);
-      window.removeEventListener("resize", updateActiveSection);
-    };
+    elements.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
   }, [items]);
 
   const scrollToSection = (id: string) => {
-    const section = document.getElementById(id);
-
-    if (!section) {
-      return;
-    }
-
-    section.scrollIntoView({ behavior: "smooth", block: "start" });
+    const el = document.getElementById(id);
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY - 96;
+    window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
     window.history.replaceState(null, "", `#${id}`);
     setActiveId(id);
+    onNavigate?.();
   };
 
   return (
     <ul className="mt-4 space-y-1 text-sm leading-6">
       {items.map((item) => {
         const isActive = item.id === activeId;
-
         return (
           <li key={item.id}>
             <button

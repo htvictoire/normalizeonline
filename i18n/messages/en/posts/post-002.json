@@ -1,0 +1,31 @@
+{
+  "slug": "column-checks-before-export",
+  "title": "Seven column-level checks before you export a clean dataset",
+  "description": "The review checklist we use to catch the most expensive normalization mistakes before they leave the browser.",
+  "readingTime": "5 min read",
+  "headings": [
+    "A small checklist prevents expensive reruns",
+    "What to verify every time",
+    "Use review to reduce ambiguity, not just errors"
+  ],
+  "content": {
+    "s1": {
+      "p1": "Most broken exports are not caused by dramatic failures. They come from one unchecked assumption in one column that looked harmless during a spot check.",
+      "p2": "A lightweight pre-export review keeps that risk manageable and makes the resulting file much easier to trust."
+    },
+    "s2": {
+      "p1": "Run through the same column-level checks regardless of file type. The goal is consistency, not cleverness.",
+      "li1": "Type: confirm the inferred type matches the real business meaning.",
+      "li2": "Format: verify date, number, currency, and percentage conventions.",
+      "li3": "Nulls: inspect blanks, placeholders, and sentinel values such as NA or dash.",
+      "li4": "Ranges: catch outliers, impossible values, and negative numbers where they should not exist.",
+      "li5": "Categories: check casing, spelling drift, and duplicate labels that should collapse to one value.",
+      "li6": "Identifiers: preserve leading zeros and do not coerce keys into numbers.",
+      "li7": "Output shape: confirm the exported representation matches what downstream tools expect."
+    },
+    "s3": {
+      "p1": "A strong review step does more than find malformed rows. It surfaces uncertainty. If a column could reasonably be interpreted in two ways, that is exactly when you pause and set the rule explicitly.",
+      "p2": "The cleanest export is the one that leaves the fewest decisions for the next person or service in the chain."
+    }
+  }
+}

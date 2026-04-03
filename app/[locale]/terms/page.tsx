@@ -1,24 +1,30 @@
-import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
+import { type Locale } from "@/i18n/config";
+import { buildMetadata } from "@/i18n/seo";
 import LegalPage from "@/app/components/legal-page";
 
-export const metadata: Metadata = {
-  title: "Terms of Use",
-  description:
-    "Terms governing your use of Normalize — acceptable use, file ownership, ephemeral storage, disclaimers, and governing law.",
-  alternates: { canonical: "https://normalizeonline.com/terms" },
-  openGraph: {
-    title: "Terms of Use | Normalize",
-    description:
-      "Terms governing your use of Normalize — acceptable use, file ownership, ephemeral storage, disclaimers, and governing law.",
-    url: "https://normalizeonline.com/terms",
-  },
-  robots: { index: true, follow: false },
-};
+type PageParams = { readonly params: Promise<{ readonly locale: string }> };
 
-export default function TermsOfUse() {
+export async function generateMetadata({ params }: PageParams) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "terms" });
+  return buildMetadata({
+    route: "TERMS",
+    locale: locale as Locale,
+    title: t("seo.title"),
+    description: t("seo.description"),
+    ogTitle: t("seo.ogTitle"),
+    ogDescription: t("seo.ogDescription"),
+  });
+}
+
+export default async function TermsOfUse({ params }: PageParams) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "terms" });
+
   return (
-    <LegalPage title="Terms of Use" lastUpdated="March 28, 2026">
+    <LegalPage title={t("page.title")} lastUpdated={t("page.lastUpdated")}>
       <h2>1. Acceptance of Terms</h2>
       <p>
         By accessing or using Normalize (the "Service"), you agree to be bound by these Terms of
@@ -137,7 +143,7 @@ export default function TermsOfUse() {
           github.com/htvictoire/normalize
         </a>
         . The web application, user interface, and associated service infrastructure remain the
-        property of the operator and are not covered by the engine's open source license.
+        property of the operator and are not covered by the engine&apos;s open source license.
       </p>
 
       <h2>8. Availability and Modifications</h2>

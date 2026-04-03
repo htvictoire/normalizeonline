@@ -1,0 +1,76 @@
+{
+  "index": {
+    "seo": {
+      "title": "Blogue | Normalize – Normalisation de données structurées",
+      "description": "Articles pratiques sur le nettoyage de CSV, la normalisation Excel, la gestion des valeurs nulles, les conflits de formats de date et d'heure, et la fiabilisation des données structurées pour l'analyse.",
+      "ogTitle": "Blogue Normalize – Données structurées, rendues fiables",
+      "ogDescription": "Articles pratiques sur le nettoyage de CSV, la normalisation Excel, la gestion des valeurs nulles, les conflits de formats de date et d'heure, et la fiabilisation des données structurées pour l'analyse."
+    },
+    "hero": {
+      "headline": "Quand les données arrivent incohérentes, c'est le pipeline qui en paie le prix. Voici comment corriger ça à la source.",
+      "description": "Des articles sur les vrais problèmes dans les jeux de données structurés — formats de date et d'heure mélangés, jetons nuls inconsistants, types de colonnes qui ne semblent corrects qu'en apparence, et exports de tableurs qui échouent silencieusement. Chaque article couvre un problème de normalisation spécifique et comment le résoudre avant qu'il n'atteigne vos analyses, votre base de données ou tout autre flux de travail."
+    }
+  },
+  "directory": {
+    "search": "Rechercher des articles",
+    "topic": "Thème",
+    "allCategories": "Tous les thèmes",
+    "tags": "Étiquettes",
+    "allTags": "Toutes les étiquettes",
+    "orderBy": "Trier par",
+    "newest": "Plus récent",
+    "oldest": "Plus ancien",
+    "titleAZ": "Titre A-Z",
+    "titleZA": "Titre Z-A",
+    "filters": "Ouvrir les filtres",
+    "noResults": {
+      "heading": "Aucun article ne correspond à ces filtres.",
+      "description": "Essayez un terme de recherche plus large ou supprimez l'un des thèmes ou étiquettes sélectionnés."
+    }
+  },
+  "article": {
+    "backToBlog": "Retour au blogue",
+    "articleDetails": "Détails de l'article",
+    "published": "Publié le",
+    "readingTime": "Temps de lecture",
+    "category": "Catégorie",
+    "tags": "Étiquettes",
+    "inThisArticle": "Dans cet article",
+    "cta": {
+      "eyebrow": "Appliquez-le",
+      "heading": "Vérifiez les règles de colonnes avant de transformer l'ensemble du fichier.",
+      "description": "Normalize est conçu autour de ce flux de travail : inspectez un échantillon, confirmez le sens de chaque colonne, puis exportez un jeu de données propre avec des paramètres de sortie explicites.",
+      "openNormalize": "Ouvrir Normalize",
+      "browseArticles": "Parcourir d'autres articles"
+    },
+    "related": {
+      "eyebrow": "Autres articles",
+      "heading": "Continuez à affiner le flux de travail.",
+      "viewAll": "Voir tous les articles"
+    }
+  },
+  "categories": {
+    "workflow_design": "Conception de flux",
+    "operations": "Opérations",
+    "data_quality": "Qualité des données"
+  },
+  "tags": {
+    "csv": "CSV",
+    "schema_inference": "Inférence de schéma",
+    "data_quality": "Qualité des données",
+    "validation": "Validation",
+    "exports": "Exports",
+    "quality_control": "Contrôle qualité",
+    "null_handling": "Gestion des nulls",
+    "analytics": "Analytique",
+    "pipelines": "Pipelines"
+  },
+  "readArticle": "Lire l'article",
+  "notFound": {
+    "eyebrow": "Blogue",
+    "heading": "Cet article n'existe pas.",
+    "description": "Le lien est peut-être obsolète ou l'article a peut-être été déplacé. Recommencez depuis l'index du blogue.",
+    "backToBlog": "Retour au blogue",
+    "openNormalize": "Ouvrir Normalize"
+  }
+}

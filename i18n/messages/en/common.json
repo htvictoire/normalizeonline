@@ -1,0 +1,17 @@
+{
+  "header": {
+    "blog": "Blog",
+    "contact": "Contact",
+    "privacyPolicy": "Privacy Policy",
+    "dataProtection": "Data Protection",
+    "termsOfUse": "Terms of Use",
+    "openMenu": "Open navigation menu",
+    "closeMenu": "Close navigation menu"
+  },
+  "footer": {
+    "tagline": "Turn messy tabular files into a clean, confirmed dataset.",
+    "copyright": "© {year} Normalize. All rights reserved.",
+    "blog": "Blog",
+    "contact": "Contact"
+  }
+}
