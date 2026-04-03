@@ -75,7 +75,7 @@ export default function Header() {
               height={22}
               width={110}
               priority
-              className="h-[22px] w-auto sm:h-[26px]"
+              className="h-6 w-auto sm:h-[26px]"
             />
           </Link>
           <button
@@ -119,7 +119,7 @@ export default function Header() {
                     height={22}
                     width={110}
                     priority
-                    className="h-[22px] w-auto sm:h-[26px]"
+                    className="h-6 w-auto sm:h-[26px]"
                   />
                 </Link>
                 <button
