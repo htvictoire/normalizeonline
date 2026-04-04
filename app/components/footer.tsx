@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import LocaleSwitcher from "./locale-switcher";
 
 export default async function Footer() {
   const t = await getTranslations("footer");
@@ -25,6 +26,7 @@ export default async function Footer() {
             {t("contact")}
           </Link>
         </div>
+        <LocaleSwitcher />
         <a
           href="https://github.com/htvictoire/normalize"
           target="_blank"
