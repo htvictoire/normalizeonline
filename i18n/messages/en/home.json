@@ -34,12 +34,20 @@
     "text": "Normalize is open source. The engine, normalization rules, and pipeline are",
     "linkText": "available on GitHub"
   },
+  "waitlistEmail": {
+    "subject": "You're on the Normalize waitlist",
+    "heading": "You're on the list.",
+    "p1": "We'll email you directly when the hosted interface opens. No newsletter, no updates. Just the one email when it's ready.",
+    "p2": "Normalize takes raw CSV, Excel, and JSON files and turns them into typed, validated datasets: confirmed structure, resolved nulls, and a deterministic output your pipeline can trust.",
+    "cta": "Read the blog",
+    "footer": "You received this because you signed up at normalizeonline.com.",
+    "copyright": "© {year} Normalize. Turn messy tabular files into clean, typed datasets."
+  },
   "waitlist": {
     "heading": "The hosted interface is in early access.",
     "description": "Leave your email and we'll let you know when it opens, or explore the source on <githubLink>GitHub</githubLink> now.",
     "placeholder": "your@email.com",
     "cta": "Get early access",
-    "sending": "...",
     "success": "You're on the list. We'll be in touch.",
     "error": "Invalid email address",
     "serverError": "Something went wrong."

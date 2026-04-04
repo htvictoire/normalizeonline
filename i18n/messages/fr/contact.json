@@ -24,7 +24,6 @@
     "messagePlaceholder": "Décrivez votre question ou problème en détail...",
     "messageMin": "Le message doit comporter au moins {min} caractères",
     "send": "Envoyer le message",
-    "sending": "Envoi en cours…",
     "serverError": "Une erreur s'est produite. Veuillez réessayer.",
     "topics": {
       "privacy": "Confidentialité et protection des données",

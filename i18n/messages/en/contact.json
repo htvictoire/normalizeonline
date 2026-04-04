@@ -24,7 +24,6 @@
     "messagePlaceholder": "Describe your question or issue in detail...",
     "messageMin": "Message must be at least {min} characters",
     "send": "Send message",
-    "sending": "Sending…",
     "serverError": "Something went wrong. Please try again.",
     "topics": {
       "privacy": "Privacy & data protection",

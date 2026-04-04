@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { z } from "zod";
 
 const schema = z.object({ email: z.email() });
@@ -10,6 +10,7 @@ const GITHUB_URL = "https://github.com/htvictoire/normalize";
 
 export default function UploadPad() {
   const t = useTranslations("home.waitlist");
+  const locale = useLocale();
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
@@ -28,7 +29,7 @@ export default function UploadPad() {
     const res = await fetch("/api/waitlist", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email, locale }),
     });
 
     if (res.ok) {
@@ -73,9 +74,14 @@ export default function UploadPad() {
             <button
               type="submit"
               disabled={status === "loading"}
-              className="whitespace-nowrap rounded-lg bg-[#32D3B0] px-5 py-2.5 text-sm font-semibold text-[#1B2A3B] transition-colors hover:bg-[#20a88d] disabled:opacity-50"
+              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-[#32D3B0] px-5 py-2.5 text-sm font-semibold text-[#1B2A3B] transition-colors hover:bg-[#20a88d] disabled:opacity-50"
             >
-              {status === "loading" ? t("sending") : t("cta")}
+              {status === "loading" ? (
+                <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" />
+                  <path fill="currentColor" className="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+              ) : t("cta")}
             </button>
           </div>
           {error && <span className="text-xs text-red-400">{error}</span>}

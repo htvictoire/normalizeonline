@@ -160,9 +160,14 @@ export default function ContactForm() {
         <button
           type="submit"
           disabled={status === "loading"}
-          className="rounded-md border border-brand px-6 py-2.5 text-sm font-medium text-brand hover:border-ink hover:text-ink disabled:opacity-50"
+          className="inline-flex items-center justify-center gap-2 rounded-md border border-brand px-6 py-2.5 text-sm font-medium text-brand hover:border-ink hover:text-ink disabled:opacity-50"
         >
-          {status === "loading" ? t("form.sending") : t("form.send")}
+          {status === "loading" ? (
+            <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" />
+              <path fill="currentColor" className="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+          ) : t("form.send")}
         </button>
       </form>
 
