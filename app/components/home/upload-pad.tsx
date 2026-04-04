@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { UploadArt } from "./arts";
 import { z } from "zod";
 
 const schema = z.object({ email: z.email() });
+
+const GITHUB_URL = "https://github.com/htvictoire/normalize";
 
 export default function UploadPad() {
   const t = useTranslations("home.waitlist");
@@ -40,39 +41,44 @@ export default function UploadPad() {
   }
 
   return (
-    <div
-      className="rounded-[28px] bg-canvas px-4 py-5 text-center md:px-8 md:py-6"
-      style={{
-        backgroundImage: `url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='28' ry='28' stroke='%23b0b8c4' stroke-width='1.5' stroke-dasharray='10%2c6' stroke-linecap='square'/%3e%3c/svg%3e")`,
-      }}
-    >
-      <div className="mx-auto w-16 [&_path]:fill-ink-muted">
-        <UploadArt className="w-full h-auto" />
-      </div>
-      <div className="mt-5 text-lg font-semibold text-ink md:mt-6 md:text-xl">{t("heading")}</div>
-      <div className="mt-2 text-sm text-ink-muted">{t("description")}</div>
+    <div className="rounded-2xl bg-[#1B2A3B] px-6 py-10 text-center md:px-8 md:py-12">
+      <p className="text-base font-semibold text-white md:text-lg">{t("heading")}</p>
+      <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-white/70">
+        {t.rich("description", {
+          githubLink: (chunks) => (
+            <a
+              href={GITHUB_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 hover:text-white"
+            >
+              {chunks}
+            </a>
+          ),
+        })}
+      </p>
 
       {status === "success" ? (
-        <p className="mt-8 text-sm text-ink-muted">{t("success")}</p>
+        <p className="mt-8 text-sm text-white/70">{t("success")}</p>
       ) : (
-        <form onSubmit={handleSubmit} className="mt-8 flex flex-col items-center gap-3">
-          <div className="flex w-full max-w-sm flex-col gap-3 md:flex-row md:gap-2">
+        <form onSubmit={handleSubmit} className="mt-6 flex flex-col items-center gap-2">
+          <div className="flex w-full max-w-md flex-col gap-2 sm:flex-row">
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={t("placeholder")}
-              className="min-w-0 flex-1 rounded-md border border-border bg-canvas px-3 py-2.5 text-sm text-ink placeholder:text-ink-muted focus:border-brand focus:outline-none"
+              className="min-w-0 flex-1 rounded-lg border border-white/10 bg-white px-3 py-2.5 text-sm text-ink placeholder:text-ink-muted focus:border-[#32D3B0] focus:outline-none"
             />
             <button
               type="submit"
               disabled={status === "loading"}
-              className="w-full whitespace-nowrap rounded-md border border-brand px-5 py-2.5 text-sm font-medium text-brand hover:border-ink hover:text-ink disabled:opacity-50 md:w-auto"
+              className="whitespace-nowrap rounded-lg bg-[#32D3B0] px-5 py-2.5 text-sm font-semibold text-[#1B2A3B] transition-colors hover:bg-[#20a88d] disabled:opacity-50"
             >
               {status === "loading" ? t("sending") : t("cta")}
             </button>
           </div>
-          {error && <span className="text-xs text-error">{error}</span>}
+          {error && <span className="text-xs text-red-400">{error}</span>}
         </form>
       )}
     </div>

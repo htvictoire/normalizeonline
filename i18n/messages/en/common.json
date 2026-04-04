@@ -9,7 +9,7 @@
     "closeMenu": "Close navigation menu"
   },
   "footer": {
-    "tagline": "Turn messy tabular files into a clean, confirmed dataset.",
+    "tagline": "Turn messy tabular files into clean, typed datasets.",
     "copyright": "© {year} Normalize. All rights reserved.",
     "blog": "Blog",
     "contact": "Contact"

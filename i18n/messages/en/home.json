@@ -6,6 +6,7 @@
     "ogDescription": "Upload a CSV, Excel, or JSON file. Normalize suggests how to interpret your data — you confirm, adjust per column, and export as CSV, JSON, or Parquet."
   },
   "headline": "Turn messy files into clean data.",
+  "subline": "CSV, Excel, and JSON files rarely arrive clean. Normalize detects their structure, lets you confirm it, and produces a typed, validated dataset your pipeline can trust.",
   "steps": {
     "upload": {
       "title": "Upload",
@@ -13,24 +14,33 @@
     },
     "confirm": {
       "title": "Confirm structure",
-      "desc": "Normalize detects column types, tokens, and formats. You adjust how the data should be understood."
+      "desc": "Normalize samples the file and proposes how each column should be interpreted: types, date formats, null tokens, numeric separators. You confirm before any transformation runs."
     },
     "output": {
       "title": "Output settings",
-      "desc": "Choose how the normalized data should be produced: format, date styles, tokens, and other rules."
+      "desc": "Set your output format and normalization rules. Normalize applies them consistently across every row, resolving nulls, standardizing types, and recording every parse issue with its row and column."
     },
     "download": {
       "title": "Download",
-      "desc": "Export the normalized dataset as CSV, Excel, JSON, or Parquet."
+      "desc": "Download the normalized dataset as CSV, Excel, JSON, or Parquet. Every output includes a quality report, a trace artifact, and a deterministic fingerprint."
     }
   },
+  "capabilities": {
+    "scale":     { "label": "Scale",            "text": "Processes datasets up to 10 million rows. No batching, no scripts, no splitting files." },
+    "types":     { "label": "Type support",     "text": "Every column gets a confirmed semantic type before conversion runs. Strings, booleans, dates, times, integers, decimals, currencies, percentages, fractions, signed values, and accounting notation." },
+    "artifacts": { "label": "Output artifacts", "text": "Every run produces a normalized dataset, a full trace artifact, and a manifest JSON, enough to audit, replay, or verify any output." }
+  },
+  "openSource": {
+    "text": "Normalize is open source. The engine, normalization rules, and pipeline are",
+    "linkText": "available on GitHub"
+  },
   "waitlist": {
-    "heading": "Be the first to try it.",
-    "description": "Leave your email and we'll reach out as soon as access opens.",
+    "heading": "The hosted interface is in early access.",
+    "description": "Leave your email and we'll let you know when it opens, or explore the source on <githubLink>GitHub</githubLink> now.",
     "placeholder": "your@email.com",
     "cta": "Get early access",
-    "sending": "…",
-    "success": "You're on the list — we'll be in touch.",
+    "sending": "...",
+    "success": "You're on the list. We'll be in touch.",
     "error": "Invalid email address",
     "serverError": "Something went wrong."
   }

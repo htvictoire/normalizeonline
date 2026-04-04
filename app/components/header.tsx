@@ -72,8 +72,8 @@ export default function Header() {
             <Image
               src="/normalizelogo.png"
               alt="Normalize"
-              height={22}
-              width={110}
+              height={28}
+              width={140}
               priority
               className="h-6 w-auto sm:h-[26px]"
             />

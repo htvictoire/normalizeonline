@@ -56,17 +56,60 @@ export default async function HomePage({ params }: PageParams) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <main className="mx-auto max-w-7xl px-4 py-6 md:px-6 md:py-8">
-        <h1 className="mt-2 text-center text-4xl font-semibold tracking-tight text-ink sm:text-5xl md:mt-4 md:text-6xl">
+      <main className="mx-auto max-w-7xl px-4 py-8 md:px-6 md:py-12">
+        {/* Hero */}
+        <h1 className="text-center text-4xl font-semibold tracking-tight text-ink sm:text-5xl md:text-6xl">
           {t("headline")}
         </h1>
-        <section className="mt-10 md:mt-0">
+        <p className="mx-auto mt-4 max-w-2xl text-center text-sm leading-6 text-ink-muted sm:text-base sm:leading-7">
+          {t("subline")}
+        </p>
+
+        {/* Steps */}
+        <section className="mt-10">
           <Steps />
         </section>
-        <section className="mt-10 md:mt-12">
+      </main>
+
+      {/* Capabilities — full-width tinted band */}
+      <section className="mt-10 border-b border-t border-[#E2E8F0] bg-[#F8FAFC] py-14 md:mt-14 md:py-16">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="grid gap-8 sm:grid-cols-3 sm:divide-x sm:divide-[#E2E8F0]">
+            {(["scale", "types", "artifacts"] as const).map((key) => (
+              <div key={key} className="sm:px-8 sm:first:pl-0 sm:last:pr-0">
+                <p className="text-xs font-medium uppercase tracking-[0.15em] text-[#32D3B0]">
+                  {t(`capabilities.${key}.label`)}
+                </p>
+                <p className="mt-2 text-sm leading-6 text-ink-muted">
+                  {t(`capabilities.${key}.text`)}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-10 border-t border-[#E2E8F0] pt-6 text-center">
+            <p className="text-sm text-ink-muted">
+              {t("openSource.text")}{" "}
+              <a
+                href="https://github.com/htvictoire/normalize"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-ink underline underline-offset-2 hover:text-brand"
+              >
+                {t("openSource.linkText")}
+              </a>
+              .
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Waitlist */}
+      <div className="mx-auto max-w-7xl px-4 md:px-6">
+        <section className="py-10 md:py-12">
           <UploadPad />
         </section>
-      </main>
+      </div>
     </>
   );
 }
