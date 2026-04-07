@@ -43,6 +43,26 @@
     "footer": "Vous recevez cet e-mail car vous vous êtes inscrit sur normalizeonline.com.",
     "copyright": "© {year} Normalize. Transformez vos fichiers tabulaires en données propres et typées."
   },
+  "uploadPad": {
+    "heading": "Déposez un fichier CSV, Excel ou JSON ici",
+    "selectFiles": "Sélectionner des fichiers",
+    "change": "Changer",
+    "upload": "Envoyer",
+    "chooseAnother": "Choisir un autre fichier",
+    "analyzing": "Analyse de votre fichier…",
+    "successHeading": "Prêt à configurer",
+    "successDesc": "Votre fichier a été traité. Configurez vos colonnes pour démarrer la normalisation.",
+    "normalizeAnother": "Normaliser un autre fichier",
+    "errorHeading": "Échec du transfert",
+    "retry": "Réessayer",
+    "startOver": "Recommencer",
+    "errors": {
+      "unsupportedType": "Type de fichier non pris en charge. Utilisez CSV, Excel (XLSX) ou JSON.",
+      "tooLarge": "Les fichiers {type} doivent faire moins de {limit} Mo.",
+      "processFailed": "Échec du traitement. Veuillez réessayer.",
+      "generic": "Une erreur s'est produite. Veuillez réessayer."
+    }
+  },
   "waitlist": {
     "heading": "L'interface hébergée est en accès anticipé.",
     "description": "Laissez votre adresse e-mail et nous vous informerons quand elle ouvre, ou explorez le code source sur <githubLink>GitHub</githubLink> dès maintenant.",

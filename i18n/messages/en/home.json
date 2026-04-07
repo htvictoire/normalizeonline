@@ -43,6 +43,26 @@
     "footer": "You received this because you signed up at normalizeonline.com.",
     "copyright": "© {year} Normalize. Turn messy tabular files into clean, typed datasets."
   },
+  "uploadPad": {
+    "heading": "Drop a CSV, Excel, or JSON file here",
+    "selectFiles": "Select files",
+    "change": "Change",
+    "upload": "Upload",
+    "chooseAnother": "Choose another file",
+    "analyzing": "Analyzing your file…",
+    "successHeading": "Ready to configure",
+    "successDesc": "Your file has been processed. Configure your columns to start normalization.",
+    "normalizeAnother": "Normalize another file",
+    "errorHeading": "Upload failed",
+    "retry": "Retry",
+    "startOver": "Start over",
+    "errors": {
+      "unsupportedType": "Unsupported file type. Use CSV, Excel (XLSX), or JSON.",
+      "tooLarge": "{type} files must be under {limit} MB.",
+      "processFailed": "Failed to process file. Please try again.",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
   "waitlist": {
     "heading": "The hosted interface is in early access.",
     "description": "Leave your email and we'll let you know when it opens, or explore the source on <githubLink>GitHub</githubLink> now.",

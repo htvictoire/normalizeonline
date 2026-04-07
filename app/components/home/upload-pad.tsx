@@ -1,91 +1,302 @@
 "use client";
 
-import { useState } from "react";
-import { useTranslations, useLocale } from "next-intl";
-import { z } from "zod";
+import { useState, useRef, useCallback, type DragEvent } from "react";
+import { useTranslations } from "next-intl";
+import { UploadArt } from "./arts";
+import { getUploadUrl, createDataset } from "@/lib/api/endpoints/normalization";
+import { uploadToS3 } from "@/lib/storage";
+import type { Dataset } from "@/lib/types/dataset";
 
-const schema = z.object({ email: z.email() });
+type UploadPhase =
+  | { phase: "idle" }
+  | { phase: "selected"; file: File; error?: string }
+  | { phase: "uploading"; file: File; progress: number }
+  | { phase: "processing"; file: File }
+  | { phase: "success"; dataset: Dataset }
+  | { phase: "error"; message: string; file?: File };
 
-const GITHUB_URL = "https://github.com/htvictoire/normalize";
+const SIZE_LIMITS: Record<string, number> = {
+  csv:  50 * 1024 * 1024,
+  xlsx: 15 * 1024 * 1024,
+  json: 10 * 1024 * 1024,
+};
+
+function getExtension(file: File): string {
+  return file.name.split(".").pop()?.toLowerCase() ?? "";
+}
+
+function getFileType(ext: string): "CSV" | "XLSX" | "JSON" | null {
+  if (ext === "csv")  return "CSV";
+  if (ext === "xlsx") return "XLSX";
+  if (ext === "json") return "JSON";
+  return null;
+}
+
+type ValidationError =
+  | { key: "errors.unsupportedType" }
+  | { key: "errors.tooLarge"; type: string; limit: number };
+
+function getValidationError(file: File): ValidationError | null {
+  const ext = getExtension(file);
+  if (!getFileType(ext)) return { key: "errors.unsupportedType" };
+  const limit = SIZE_LIMITS[ext];
+  if (file.size > limit) {
+    return { key: "errors.tooLarge", type: ext.toUpperCase(), limit: Math.round(limit / (1024 * 1024)) };
+  }
+  return null;
+}
+
+function getBaseName(filename: string): string {
+  return filename.replace(/\.[^.]+$/, "");
+}
+
+function formatSize(bytes: number): string {
+  if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  return `${Math.round(bytes / 1024)} KB`;
+}
+
+async function computeChecksum(file: File): Promise<string> {
+  const buffer = await file.arrayBuffer();
+  const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
+  return Array.from(new Uint8Array(hashBuffer))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
 
 export default function UploadPad() {
-  const t = useTranslations("home.waitlist");
-  const locale = useLocale();
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
+  const t = useTranslations("home.uploadPad");
+  const [state, setState] = useState<UploadPhase>({ phase: "idle" });
+  const [isDragging, setIsDragging] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
+  const handleFile = useCallback(
+    (file: File) => {
+      const validationError = getValidationError(file);
+      const error = validationError
+        ? validationError.key === "errors.tooLarge"
+          ? t("errors.tooLarge", { type: validationError.type, limit: validationError.limit })
+          : t("errors.unsupportedType")
+        : undefined;
+      setState({ phase: "selected", file, error });
+    },
+    [t]
+  );
+
+  const handleDrop = useCallback(
+    (e: DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      setIsDragging(false);
+      const file = e.dataTransfer.files[0];
+      if (file) handleFile(file);
+    },
+    [handleFile]
+  );
+
+  const handleDragOver = useCallback((e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    setError("");
+    setIsDragging(true);
+  }, []);
 
-    const parsed = schema.safeParse({ email });
-    if (!parsed.success) {
-      setError(t("error"));
-      return;
+  const handleDragLeave = useCallback(() => setIsDragging(false), []);
+
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) handleFile(file);
+      e.target.value = "";
+    },
+    [handleFile]
+  );
+
+  const handleUpload = useCallback(async () => {
+    if (state.phase !== "selected" || state.error) return;
+
+    const file = state.file;
+    const fileType = getFileType(getExtension(file))!;
+
+    try {
+      setState({ phase: "uploading", file, progress: 0 });
+
+      const uploadUrlPromise = getUploadUrl(file.name);
+      const checksumPromise = computeChecksum(file);
+
+      const s3UploadPromise = uploadUrlPromise.then(({ url }) =>
+        uploadToS3(url, file, (progress) => {
+          setState({ phase: "uploading", file, progress });
+        })
+      );
+
+      const [{ s3_key }, source_checksum] = await Promise.all([
+        uploadUrlPromise,
+        checksumPromise,
+        s3UploadPromise,
+      ]);
+
+      setState({ phase: "processing", file });
+
+      const response = await createDataset({
+        name: getBaseName(file.name),
+        original_name: file.name,
+        file_type: fileType,
+        s3_key,
+        size_mb: file.size / (1024 * 1024),
+        source_checksum,
+      });
+
+      if (response?.success && response.data) {
+        setState({ phase: "success", dataset: response.data });
+      } else {
+        setState({ phase: "error", message: t("errors.processFailed"), file });
+      }
+    } catch {
+      setState({ phase: "error", message: t("errors.generic"), file });
     }
+  }, [state, t]);
 
-    setStatus("loading");
-    const res = await fetch("/api/waitlist", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, locale }),
-    });
+  const reset = useCallback(() => setState({ phase: "idle" }), []);
 
-    if (res.ok) {
-      setStatus("success");
-    } else {
-      const json = await res.json();
-      setError(json.error ?? t("serverError"));
-      setStatus("idle");
-    }
-  }
+  const acceptsDrop = state.phase === "idle" || state.phase === "selected";
 
   return (
-    <div className="rounded-2xl bg-[#1B2A3B] px-6 py-10 text-center md:px-8 md:py-12">
-      <p className="text-base font-semibold text-white md:text-lg">{t("heading")}</p>
-      <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-white/70">
-        {t.rich("description", {
-          githubLink: (chunks) => (
-            <a
-              href={GITHUB_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline underline-offset-2 hover:text-white"
-            >
-              {chunks}
-            </a>
-          ),
-        })}
-      </p>
+    <div
+      className={[
+        "w-full rounded-[28px] border-2 border-dashed bg-canvas px-8 py-6 text-center transition-colors",
+        isDragging ? "border-brand bg-brand/5" : "border-border",
+      ].join(" ")}
+      onDrop={acceptsDrop ? handleDrop : undefined}
+      onDragOver={acceptsDrop ? handleDragOver : undefined}
+      onDragLeave={acceptsDrop ? handleDragLeave : undefined}
+    >
+      <input
+        ref={inputRef}
+        type="file"
+        accept=".csv,.xlsx,.json"
+        className="hidden"
+        onChange={handleInputChange}
+      />
 
-      {status === "success" ? (
-        <p className="mt-8 text-sm text-white/70">{t("success")}</p>
-      ) : (
-        <form onSubmit={handleSubmit} className="mt-6 flex flex-col items-center gap-2">
-          <div className="flex w-full max-w-md flex-col gap-2 sm:flex-row">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder={t("placeholder")}
-              className="min-w-0 flex-1 rounded-lg border border-white/10 bg-white px-3 py-2.5 text-sm text-ink placeholder:text-ink-muted focus:border-[#32D3B0] focus:outline-none"
-            />
+      {state.phase === "idle" && (
+        <>
+          <div className="mx-auto w-16 [&_path]:fill-ink-muted">
+            <UploadArt className="w-full h-auto" />
+          </div>
+          <div className="mt-6 text-xl font-semibold text-ink">{t("heading")}</div>
+          <div className="mt-8 flex justify-center">
             <button
-              type="submit"
-              disabled={status === "loading"}
-              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-[#32D3B0] px-5 py-2.5 text-sm font-semibold text-[#1B2A3B] transition-colors hover:bg-[#20a88d] disabled:opacity-50"
+              onClick={() => inputRef.current?.click()}
+              className="rounded-md border border-brand px-8 py-3 text-sm font-medium text-brand hover:border-ink hover:text-ink"
             >
-              {status === "loading" ? (
-                <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" />
-                  <path fill="currentColor" className="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-              ) : t("cta")}
+              {t("selectFiles")}
             </button>
           </div>
-          {error && <span className="text-xs text-red-400">{error}</span>}
-        </form>
+        </>
+      )}
+
+      {state.phase === "selected" && (
+        <>
+          <div className="mx-auto w-16 [&_path]:fill-ink-muted">
+            <UploadArt className="w-full h-auto" />
+          </div>
+          <div className="mt-6 text-base font-semibold text-ink">{state.file.name}</div>
+          <div className="mt-1 text-sm text-ink-muted">{formatSize(state.file.size)}</div>
+          {state.error ? (
+            <>
+              <div className="mt-4 text-sm text-error">{state.error}</div>
+              <div className="mt-6 flex justify-center">
+                <button
+                  onClick={reset}
+                  className="rounded-md border border-border px-6 py-2.5 text-sm font-medium text-ink-muted hover:border-ink hover:text-ink"
+                >
+                  {t("chooseAnother")}
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="mt-6 flex justify-center gap-3">
+              <button
+                onClick={reset}
+                className="rounded-md border border-border px-6 py-2.5 text-sm font-medium text-ink-muted hover:border-ink hover:text-ink"
+              >
+                {t("change")}
+              </button>
+              <button
+                onClick={handleUpload}
+                className="rounded-md bg-brand border border-brand px-8 py-2.5 text-sm font-medium text-white hover:bg-brand-dark hover:border-brand-dark"
+              >
+                {t("upload")}
+              </button>
+            </div>
+          )}
+        </>
+      )}
+
+      {state.phase === "uploading" && (
+        <>
+          <div className="mx-auto w-16 [&_path]:fill-ink-muted">
+            <UploadArt className="w-full h-auto" />
+          </div>
+          <div className="mt-6 text-base font-semibold text-ink">{state.file.name}</div>
+          <div className="mt-4 px-4">
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-border">
+              <div
+                className="h-full rounded-full bg-brand transition-all duration-150"
+                style={{ width: `${state.progress}%` }}
+              />
+            </div>
+            <div className="mt-2 text-sm text-ink-muted">{state.progress}%</div>
+          </div>
+        </>
+      )}
+
+      {state.phase === "processing" && (
+        <>
+          <div className="mx-auto w-16 [&_path]:fill-ink-muted">
+            <UploadArt className="w-full h-auto" />
+          </div>
+          <div className="mt-6 text-base font-semibold text-ink">{state.file.name}</div>
+          <div className="mt-2 text-sm text-ink-muted">{t("analyzing")}</div>
+        </>
+      )}
+
+      {state.phase === "success" && (
+        <>
+          <div className="mt-2 text-xl font-semibold text-ink">{t("successHeading")}</div>
+          <div className="mt-2 text-sm text-ink-muted">{t("successDesc")}</div>
+          <div className="mt-6 flex justify-center">
+            <button
+              onClick={reset}
+              className="rounded-md border border-border px-6 py-2.5 text-sm font-medium text-ink-muted hover:border-ink hover:text-ink"
+            >
+              {t("normalizeAnother")}
+            </button>
+          </div>
+        </>
+      )}
+
+      {state.phase === "error" && (
+        <>
+          <div className="mx-auto w-16 [&_path]:fill-ink-muted">
+            <UploadArt className="w-full h-auto" />
+          </div>
+          <div className="mt-6 text-base font-semibold text-ink">{t("errorHeading")}</div>
+          <div className="mt-2 text-sm text-error">{state.message}</div>
+          <div className="mt-6 flex justify-center gap-3">
+            {state.file && (
+              <button
+                onClick={() => setState({ phase: "selected", file: state.file! })}
+                className="rounded-md border border-brand px-8 py-2.5 text-sm font-medium text-brand hover:border-ink hover:text-ink"
+              >
+                {t("retry")}
+              </button>
+            )}
+            <button
+              onClick={reset}
+              className="rounded-md border border-border px-6 py-2.5 text-sm font-medium text-ink-muted hover:border-ink hover:text-ink"
+            >
+              {t("startOver")}
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

@@ -105,7 +105,7 @@ export default async function HomePage({ params }: PageParams) {
       </section>
 
       {/* Waitlist */}
-      <div className="mx-auto max-w-7xl px-4 md:px-6">
+      <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
         <section className="py-10 md:py-12">
           <UploadPad />
         </section>
