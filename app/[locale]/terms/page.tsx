@@ -28,18 +28,22 @@ export default async function TermsOfUse({ params }: PageParams) {
       <h2>1. Acceptance of Terms</h2>
       <p>
         By accessing or using Normalize (the "Service"), you agree to be bound by these Terms of
-        Use ("Terms"). If you do not agree, do not use the Service. These Terms form a legally
-        binding agreement between you and the operator of Normalize ("we," "us," or "our").
+        Use ("Terms"). If you do not agree, do not use the Service. Normalize is a data
+        normalization tool, not a registered legal entity. The Service is operated by its open
+        source contributors (collectively "we," "us," or "our"). These Terms form a legally
+        binding agreement between you and those contributors.
       </p>
 
       <h2>2. Description of the Service</h2>
       <p>
         Normalize is a user-driven data normalization workflow. You upload a raw tabular file (CSV,
-        Excel, or JSON). Normalize samples the file and suggests how to interpret each column —
-        type, format, null tokens, separators, and other parameters. You review the suggestion,
-        adjust any column configuration, and confirm. After confirmation, you set your output
-        preferences (date styles, number formats, export type) and Normalize produces your clean
-        dataset. Output can be downloaded as CSV, JSON, or Parquet.
+        Excel (XLSX format only, single sheet or workbook — multi-sheet support is not yet
+        available and may be introduced in a future version), or JSON). Normalize samples the file
+        and suggests how to interpret each column — type, format, null tokens, separators, and
+        other parameters. You review the suggestion, adjust any column configuration, and confirm.
+        After confirmation, you set your output preferences (date styles, number formats, export
+        type) and Normalize produces your clean dataset. Output can be downloaded as CSV, Excel
+        (XLSX), JSON, or Parquet.
       </p>
       <p>
         The normalization output reflects the configuration you confirmed. Normalize executes your
@@ -132,7 +136,7 @@ export default async function TermsOfUse({ params }: PageParams) {
 
       <h2>7. Open Source Engine</h2>
       <p>
-        The Normalize processing engine is open source and published under its applicable license
+        The Normalize processing engine is open source and published under the MIT License
         at{" "}
         <a
           href="https://github.com/htvictoire/normalize"
@@ -172,8 +176,9 @@ export default async function TermsOfUse({ params }: PageParams) {
       </p>
       <p>
         Our total aggregate liability for any claim arising out of or related to these Terms or the
-        Service shall not exceed the amount you paid us in the twelve months preceding the claim,
-        or €100, whichever is greater.
+        Service shall not exceed the amount you paid us in the twelve months preceding the claim.
+        Where the Service was provided free of charge, our aggregate liability shall be limited to
+        the greatest extent permitted by applicable law.
       </p>
 
       <h2>11. Indemnification</h2>
@@ -185,11 +190,11 @@ export default async function TermsOfUse({ params }: PageParams) {
 
       <h2>12. Governing Law and Jurisdiction</h2>
       <p>
-        These Terms are governed by and construed in accordance with the laws of the Federal
-        Republic of Germany, without regard to its conflict of law provisions. Any disputes arising
-        out of or in connection with these Terms shall be subject to the exclusive jurisdiction of
-        the competent courts in Germany, unless mandatory consumer protection law in your country
-        of residence grants you the right to bring proceedings in your local courts.
+        These Terms are governed by and construed in accordance with the laws of England and Wales,
+        without regard to conflict of law provisions. Any disputes arising out of or in connection
+        with these Terms shall be subject to the non-exclusive jurisdiction of the courts of
+        England and Wales, unless mandatory consumer protection law in your country of residence
+        grants you the right to bring proceedings in your local courts.
       </p>
 
       <h2>13. Changes to These Terms</h2>

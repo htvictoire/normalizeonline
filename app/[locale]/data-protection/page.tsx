@@ -39,7 +39,7 @@ export default async function DataProtection({ params }: PageParams) {
         It samples your file to infer column structure, types, and format metadata, then presents
         this as a suggestion. You — the user — review the suggestion, adjust the configuration of
         any column, and confirm how the data should be interpreted. You also control the output:
-        date formats, number styles, null handling, and export type (CSV, JSON, or Parquet). The
+        date formats, number styles, null handling, and export type (CSV, Excel (XLSX), JSON, or Parquet). The
         engine uses only what you have confirmed to direct how cells are parsed — it does not
         inspect, index, or record what the data contains.
       </p>
@@ -98,7 +98,7 @@ export default async function DataProtection({ params }: PageParams) {
       </p>
       <p>
         Standard server-side request logs (IP address, timestamp, HTTP method, response code) may
-        be retained briefly for security and abuse-prevention purposes and are not used for any
+        be retained for up to 60 days for security and abuse-prevention purposes and are not used for any
         other purpose.
       </p>
 

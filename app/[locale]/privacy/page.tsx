@@ -56,7 +56,7 @@ export default async function PrivacyPolicy({ params }: PageParams) {
       <h3>2.3 Server Logs</h3>
       <p>
         Standard server request logs (IP address, timestamp, HTTP method, response code) may be
-        retained briefly for security and abuse-prevention purposes. These are not used for
+        retained for up to 60 days for security and abuse-prevention purposes. These are not used for
         analytics, profiling, or any purpose beyond operating the service.
       </p>
 
@@ -105,7 +105,7 @@ export default async function PrivacyPolicy({ params }: PageParams) {
       <ul>
         <li><strong>Source files:</strong> Deleted immediately after normalization completes.</li>
         <li><strong>Output artifacts:</strong> Automatically deleted after 1 hour.</li>
-        <li><strong>Server logs:</strong> Retained briefly for security purposes, not used for analytics.</li>
+        <li><strong>Server logs:</strong> Retained for up to 60 days for security purposes, not used for analytics.</li>
         <li><strong>Contact form submissions:</strong> Retained only as long as needed to resolve your inquiry.</li>
       </ul>
 
