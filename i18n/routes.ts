@@ -43,6 +43,12 @@ export const ROUTE_DEFS = [
     slugs: { en: "/data-protection", fr: "/protection-des-donnees" },
     indexable: true,
   },
+  {
+    key: "REVIEW",
+    base: "/review/[id]",
+    slugs: { en: "/review/[id]", fr: "/review/[id]" },
+    indexable: false,
+  },
 ] as const;
 
 export const ROUTES = Object.fromEntries(

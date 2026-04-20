@@ -6,4 +6,5 @@ export const API_ENDPOINTS = {
   uploadUrl: () => `${API_BASE}normalization/datasets/upload-url/`,
   datasets: () => `${API_BASE}normalization/datasets/`,
   dataset: (id: string) => `${API_BASE}normalization/datasets/${id}/`,
+  datasetConfirm: (id: string) => `${API_BASE}normalization/datasets/${id}/confirm/`,
 } as const;

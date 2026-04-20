@@ -32,11 +32,15 @@ const fetchWithAuth = async <T>(url: string, init?: RequestInit): Promise<FetchR
 
   let response = await doFetch();
   if (response.status === 401) {
-    await fetch(API_ENDPOINTS.authRefresh(), {
+    const refreshResponse = await fetch(API_ENDPOINTS.authRefresh(), {
       method: "POST",
       headers,
       cache: "no-store",
     });
+    if (!refreshResponse.ok) {
+      const data = (await refreshResponse.json()) as T;
+      return { data, status: refreshResponse.status };
+    }
     response = await doFetch();
   }
 

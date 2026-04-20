@@ -2,6 +2,7 @@ import { apiClient } from "../client";
 import { API_ENDPOINTS } from "../routes";
 import type { ApiResponse } from "../../types/base";
 import type { UploadUrl, Dataset } from "../../types/dataset";
+import type { InstanceConfig } from "../../types/normalize";
 
 export type CreateDatasetPayload = {
   name: string;
@@ -21,5 +22,19 @@ export function getUploadUrl(filename: string) {
 export function createDataset(payload: CreateDatasetPayload) {
   return apiClient
     .post<ApiResponse<Dataset>>(API_ENDPOINTS.datasets(), payload)
-    .then((res) => res.data);
+    .then((res) => res.data.data);
+}
+
+export function getDataset(id: string) {
+  return apiClient
+    .get<ApiResponse<Dataset>>(API_ENDPOINTS.dataset(id))
+    .then((res) => res.data.data);
+}
+
+export function confirmDataset(id: string, confirmedConfig: InstanceConfig) {
+  return apiClient
+    .post<ApiResponse<Dataset>>(API_ENDPOINTS.datasetConfirm(id), {
+      confirmed_config: confirmedConfig,
+    })
+    .then((res) => res.data.data);
 }

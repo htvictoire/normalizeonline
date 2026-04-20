@@ -50,6 +50,7 @@
     "upload": "Upload",
     "chooseAnother": "Choose another file",
     "analyzing": "Analyzing your file…",
+    "redirecting": "Taking you to the review page…",
     "successHeading": "Ready to configure",
     "successDesc": "Your file has been processed. Configure your columns to start normalization.",
     "normalizeAnother": "Normalize another file",

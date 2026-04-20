@@ -50,6 +50,7 @@
     "upload": "Envoyer",
     "chooseAnother": "Choisir un autre fichier",
     "analyzing": "Analyse de votre fichier…",
+    "redirecting": "Redirection vers la page de révision…",
     "successHeading": "Prêt à configurer",
     "successDesc": "Votre fichier a été traité. Configurez vos colonnes pour démarrer la normalisation.",
     "normalizeAnother": "Normaliser un autre fichier",

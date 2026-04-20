@@ -1,86 +1,18 @@
 "use client";
 
-import { useState, useRef, useCallback, type DragEvent } from "react";
+import { useCallback, type DragEvent } from "react";
 import { useTranslations } from "next-intl";
 import { UploadArt } from "./arts";
-import { getUploadUrl, createDataset } from "@/lib/api/endpoints/normalization";
-import { uploadToS3 } from "@/lib/storage";
-import type { Dataset } from "@/lib/types/dataset";
-
-type UploadPhase =
-  | { phase: "idle" }
-  | { phase: "selected"; file: File; error?: string }
-  | { phase: "uploading"; file: File; progress: number }
-  | { phase: "processing"; file: File }
-  | { phase: "success"; dataset: Dataset }
-  | { phase: "error"; message: string; file?: File };
-
-const SIZE_LIMITS: Record<string, number> = {
-  csv:  50 * 1024 * 1024,
-  xlsx: 15 * 1024 * 1024,
-  json: 10 * 1024 * 1024,
-};
-
-function getExtension(file: File): string {
-  return file.name.split(".").pop()?.toLowerCase() ?? "";
-}
-
-function getFileType(ext: string): "CSV" | "XLSX" | "JSON" | null {
-  if (ext === "csv")  return "CSV";
-  if (ext === "xlsx") return "XLSX";
-  if (ext === "json") return "JSON";
-  return null;
-}
-
-type ValidationError =
-  | { key: "errors.unsupportedType" }
-  | { key: "errors.tooLarge"; type: string; limit: number };
-
-function getValidationError(file: File): ValidationError | null {
-  const ext = getExtension(file);
-  if (!getFileType(ext)) return { key: "errors.unsupportedType" };
-  const limit = SIZE_LIMITS[ext];
-  if (file.size > limit) {
-    return { key: "errors.tooLarge", type: ext.toUpperCase(), limit: Math.round(limit / (1024 * 1024)) };
-  }
-  return null;
-}
-
-function getBaseName(filename: string): string {
-  return filename.replace(/\.[^.]+$/, "");
-}
+import { useUpload } from "@/lib/hooks/use-upload";
 
 function formatSize(bytes: number): string {
   if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   return `${Math.round(bytes / 1024)} KB`;
 }
 
-async function computeChecksum(file: File): Promise<string> {
-  const buffer = await file.arrayBuffer();
-  const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
-  return Array.from(new Uint8Array(hashBuffer))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-}
-
 export default function UploadPad() {
   const t = useTranslations("home.uploadPad");
-  const [state, setState] = useState<UploadPhase>({ phase: "idle" });
-  const [isDragging, setIsDragging] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleFile = useCallback(
-    (file: File) => {
-      const validationError = getValidationError(file);
-      const error = validationError
-        ? validationError.key === "errors.tooLarge"
-          ? t("errors.tooLarge", { type: validationError.type, limit: validationError.limit })
-          : t("errors.unsupportedType")
-        : undefined;
-      setState({ phase: "selected", file, error });
-    },
-    [t]
-  );
+  const { state, isDragging, setIsDragging, inputRef, handleFile, handleUpload, reset } = useUpload();
 
   const handleDrop = useCallback(
     (e: DragEvent<HTMLDivElement>) => {
@@ -89,15 +21,18 @@ export default function UploadPad() {
       const file = e.dataTransfer.files[0];
       if (file) handleFile(file);
     },
-    [handleFile]
+    [handleFile, setIsDragging]
   );
 
-  const handleDragOver = useCallback((e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(true);
-  }, []);
+  const handleDragOver = useCallback(
+    (e: DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      setIsDragging(true);
+    },
+    [setIsDragging]
+  );
 
-  const handleDragLeave = useCallback(() => setIsDragging(false), []);
+  const handleDragLeave = useCallback(() => setIsDragging(false), [setIsDragging]);
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,53 +42,6 @@ export default function UploadPad() {
     },
     [handleFile]
   );
-
-  const handleUpload = useCallback(async () => {
-    if (state.phase !== "selected" || state.error) return;
-
-    const file = state.file;
-    const fileType = getFileType(getExtension(file))!;
-
-    try {
-      setState({ phase: "uploading", file, progress: 0 });
-
-      const uploadUrlPromise = getUploadUrl(file.name);
-      const checksumPromise = computeChecksum(file);
-
-      const s3UploadPromise = uploadUrlPromise.then(({ url }) =>
-        uploadToS3(url, file, (progress) => {
-          setState({ phase: "uploading", file, progress });
-        })
-      );
-
-      const [{ s3_key }, source_checksum] = await Promise.all([
-        uploadUrlPromise,
-        checksumPromise,
-        s3UploadPromise,
-      ]);
-
-      setState({ phase: "processing", file });
-
-      const response = await createDataset({
-        name: getBaseName(file.name),
-        original_name: file.name,
-        file_type: fileType,
-        s3_key,
-        size_mb: file.size / (1024 * 1024),
-        source_checksum,
-      });
-
-      if (response?.success && response.data) {
-        setState({ phase: "success", dataset: response.data });
-      } else {
-        setState({ phase: "error", message: t("errors.processFailed"), file });
-      }
-    } catch {
-      setState({ phase: "error", message: t("errors.generic"), file });
-    }
-  }, [state, t]);
-
-  const reset = useCallback(() => setState({ phase: "idle" }), []);
 
   const acceptsDrop = state.phase === "idle" || state.phase === "selected";
 
@@ -259,18 +147,10 @@ export default function UploadPad() {
       )}
 
       {state.phase === "success" && (
-        <>
-          <div className="mt-2 text-xl font-semibold text-ink">{t("successHeading")}</div>
-          <div className="mt-2 text-sm text-ink-muted">{t("successDesc")}</div>
-          <div className="mt-6 flex justify-center">
-            <button
-              onClick={reset}
-              className="rounded-md border border-border px-6 py-2.5 text-sm font-medium text-ink-muted hover:border-ink hover:text-ink"
-            >
-              {t("normalizeAnother")}
-            </button>
-          </div>
-        </>
+        <div className="flex flex-col items-center gap-4 py-4">
+          <div className="h-8 w-8 rounded-full border-4 border-brand/30 border-t-brand animate-spin" />
+          <div className="text-sm text-ink-muted">{t("redirecting")}</div>
+        </div>
       )}
 
       {state.phase === "error" && (
@@ -283,7 +163,7 @@ export default function UploadPad() {
           <div className="mt-6 flex justify-center gap-3">
             {state.file && (
               <button
-                onClick={() => setState({ phase: "selected", file: state.file! })}
+                onClick={() => handleFile(state.file!)}
                 className="rounded-md border border-brand px-8 py-2.5 text-sm font-medium text-brand hover:border-ink hover:text-ink"
               >
                 {t("retry")}

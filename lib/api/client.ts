@@ -23,9 +23,14 @@ apiClient.interceptors.response.use(
     }
 
     const status = error.response?.status;
-    const isAuthRefresh = originalRequest.url?.includes("/accounts/users/refresh/");
-    const isAuthLogin = originalRequest.url?.includes("/accounts/users/login/");
-    const isAuthRegister = originalRequest.url?.includes("/accounts/users/register/");
+
+    const getPathname = (url: string) => {
+      try { return new URL(url).pathname; } catch { return url; }
+    };
+    const requestPath = getPathname(originalRequest.url ?? "");
+    const isAuthRefresh = requestPath === getPathname(API_ENDPOINTS.authRefresh());
+    const isAuthLogin = requestPath.includes("/accounts/users/login/");
+    const isAuthRegister = requestPath.includes("/accounts/users/register/");
 
     if (status === 401 && !isAuthRefresh && !isAuthLogin && !isAuthRegister) {
       if (!isRefreshing) {
@@ -39,14 +44,10 @@ apiClient.interceptors.response.use(
           });
       }
 
-      try {
-        if (refreshPromise) {
-          await refreshPromise;
-        }
-        return apiClient.request(originalRequest);
-      } catch (refreshError) {
-        throw refreshError;
+      if (refreshPromise) {
+        await refreshPromise;
       }
+      return apiClient.request(originalRequest);
     }
 
     throw error;

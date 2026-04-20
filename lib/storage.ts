@@ -14,7 +14,7 @@ export function uploadToS3(
     };
 
     xhr.onload = () =>
-      xhr.status >= 200 && xhr.status < 300
+      xhr.status === 200
         ? resolve()
         : reject(new Error(`Upload failed: ${xhr.status}`));
 
