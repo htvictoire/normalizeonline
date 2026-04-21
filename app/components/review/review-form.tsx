@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import type { InstanceConfig, ColumnConfig, SuggestionDisplay } from "@/lib/types/normalize";
+import { isDiff } from "@/lib/utils";
 import ColumnRow from "./column-row";
 import ConfirmBar from "./confirm-bar";
 import SourceFormatEditor from "./source-format-editor";
@@ -15,10 +16,6 @@ type Props = {
   suggestionDisplay: SuggestionDisplay;
 };
 
-function isDiff(a: unknown, b: unknown): boolean {
-  return JSON.stringify(a) !== JSON.stringify(b);
-}
-
 function SectionHeader({
   title, isDirty, open, onToggle, onRestore,
 }: {
@@ -26,7 +23,7 @@ function SectionHeader({
   isDirty: boolean;
   open: boolean;
   onToggle: () => void;
-  onRestore: () => void;
+  onRestore?: () => void;
 }) {
   const t = useTranslations("review");
   return (
@@ -35,7 +32,7 @@ function SectionHeader({
         <div className={`h-1.5 w-1.5 shrink-0 rounded-full transition-colors ${isDirty ? "bg-brand" : "bg-transparent"}`} />
         <span className="text-sm font-semibold text-ink">{title}</span>
         {isDirty && (
-          <button type="button" onClick={onRestore} className="text-xs text-ink-muted transition-colors hover:text-brand">
+          <button type="button" onClick={onRestore!} className="text-xs text-ink-muted transition-colors hover:text-brand">
             {t("restoreDefaults")}
           </button>
         )}
@@ -73,7 +70,7 @@ export default function ReviewForm({ datasetId, initialConfig, suggestionDisplay
 
   const dirtyColumnCount = useMemo(
     () => columnKeys.filter((k) => isDiff(config.column_config[k], initialConfig.column_config[k])).length,
-    [config.column_config, initialConfig.column_config, columnKeys]
+    [config.column_config, initialConfig.column_config]
   );
 
   const totalChanges = (isSourceDirty ? 1 : 0) + (isOpDirty ? 1 : 0) + dirtyColumnCount;
@@ -128,7 +125,6 @@ export default function ReviewForm({ datasetId, initialConfig, suggestionDisplay
               isDirty={false}
               open={showSample}
               onToggle={() => setShowSample((v) => !v)}
-              onRestore={() => {}}
             />
           </div>
           {showSample && <SampleTable sampleRows={suggestionDisplay.sample_rows.slice(0, 11)} />}

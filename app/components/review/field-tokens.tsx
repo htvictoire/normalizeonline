@@ -42,7 +42,7 @@ export default function FieldTokens({ label, tokens, onChange }: Props) {
       >
         {tokens.map((token, i) => (
           <span
-            key={`${token}-${i}`}
+            key={token}
             className="flex items-center gap-1 rounded-md bg-brand/10 px-2 py-0.5 text-xs text-brand"
           >
             {token}

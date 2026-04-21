@@ -49,6 +49,12 @@ export const ROUTE_DEFS = [
     slugs: { en: "/review/[id]", fr: "/review/[id]" },
     indexable: false,
   },
+  {
+    key: "PROCESSING",
+    base: "/process/[id]",
+    slugs: { en: "/process/[id]", fr: "/process/[id]" },
+    indexable: false,
+  },
 ] as const;
 
 export const ROUTES = Object.fromEntries(

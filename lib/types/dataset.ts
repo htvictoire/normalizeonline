@@ -1,18 +1,16 @@
-import type { InstanceConfig, InstanceStatus, SuggestionDisplay } from "./normalize";
+import type { InstanceConfig, InstanceStatus, SuggestionDisplay, StageTimings, ProfilingOutput, NormalizationOutput, FileFormat } from "./normalize";
 
 export type UploadUrl = {
   readonly url: string;
   readonly s3_key: string;
 };
 
-export type FileType = "CSV" | "XLSX" | "JSON";
-
 export type Dataset = {
   readonly id: string;
   readonly owner: string;
   readonly name: string;
   readonly original_name: string;
-  readonly file_type: FileType;
+  readonly file_type: FileFormat;
   readonly size_mb: number;
   readonly instance_id: string | null;
   readonly status: InstanceStatus | null;
@@ -25,6 +23,7 @@ export type Dataset = {
   readonly suggested_config: InstanceConfig | null;
   readonly suggestion_display: SuggestionDisplay | null;
   readonly confirmed_config: InstanceConfig | null;
-  readonly profiling_output: unknown | null;
-  readonly normalization_output: unknown | null;
+  readonly profiling_output: ProfilingOutput | null;
+  readonly normalization_output: NormalizationOutput | null;
+  readonly timings: StageTimings | null;
 };

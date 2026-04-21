@@ -4,6 +4,10 @@ import type { ApiResponse } from "../../types/base";
 import type { UploadUrl, Dataset } from "../../types/dataset";
 import type { InstanceConfig } from "../../types/normalize";
 
+function unwrap<T>(res: { data: ApiResponse<T> }): T {
+  return res.data.data;
+}
+
 export type CreateDatasetPayload = {
   name: string;
   original_name: string;
@@ -16,25 +20,29 @@ export type CreateDatasetPayload = {
 export function getUploadUrl(filename: string) {
   return apiClient
     .get<ApiResponse<UploadUrl>>(API_ENDPOINTS.uploadUrl(), { params: { filename } })
-    .then((res) => res.data.data);
+    .then(unwrap);
 }
 
 export function createDataset(payload: CreateDatasetPayload) {
   return apiClient
     .post<ApiResponse<Dataset>>(API_ENDPOINTS.datasets(), payload)
-    .then((res) => res.data.data);
+    .then(unwrap);
 }
 
 export function getDataset(id: string) {
   return apiClient
     .get<ApiResponse<Dataset>>(API_ENDPOINTS.dataset(id))
-    .then((res) => res.data.data);
+    .then(unwrap);
+}
+
+export function getDownloadUrl(id: string): Promise<{ url: string; filename: string }> {
+  return apiClient
+    .get<ApiResponse<{ url: string; filename: string }>>(API_ENDPOINTS.datasetDownload(id))
+    .then(unwrap);
 }
 
 export function confirmDataset(id: string, confirmedConfig: InstanceConfig) {
   return apiClient
-    .post<ApiResponse<Dataset>>(API_ENDPOINTS.datasetConfirm(id), {
-      confirmed_config: confirmedConfig,
-    })
-    .then((res) => res.data.data);
+    .post<ApiResponse<Dataset>>(API_ENDPOINTS.datasetConfirm(id), { confirmed_config: confirmedConfig })
+    .then(unwrap);
 }

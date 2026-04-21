@@ -5,6 +5,7 @@ import type { OperationConfig, TraceMode } from "@/lib/types/normalize";
 import FieldSelect from "./field-select";
 import FieldNumber from "./field-number";
 import FieldTokens from "./field-tokens";
+import { getBoolOptions } from "@/lib/utils";
 
 type Props = {
   config: OperationConfig;
@@ -14,10 +15,7 @@ type Props = {
 export default function OperationConfigEditor({ config, onChange }: Props) {
   const t = useTranslations("review");
 
-  const boolOptions = [
-    { value: "true",  label: t("yes") },
-    { value: "false", label: t("no") },
-  ];
+  const boolOptions = getBoolOptions(t);
   const traceModeOptions = [
     { value: "full",   label: t("traceFull") },
     { value: "sparse", label: t("traceSparse") },

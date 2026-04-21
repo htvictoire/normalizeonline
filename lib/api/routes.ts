@@ -7,4 +7,5 @@ export const API_ENDPOINTS = {
   datasets: () => `${API_BASE}normalization/datasets/`,
   dataset: (id: string) => `${API_BASE}normalization/datasets/${id}/`,
   datasetConfirm: (id: string) => `${API_BASE}normalization/datasets/${id}/confirm/`,
+  datasetDownload: (id: string) => `${API_BASE}normalization/datasets/${id}/download/`,
 } as const;

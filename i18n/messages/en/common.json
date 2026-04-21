@@ -8,6 +8,8 @@
     "openMenu": "Open navigation menu",
     "closeMenu": "Close navigation menu"
   },
+  "yes": "Yes",
+  "no": "No",
   "footer": {
     "tagline": "Turn messy tabular files into clean, typed datasets.",
     "copyright": "© {year} Normalize. All rights reserved.",

@@ -1,6 +1,8 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { getDatasetById } from "@/lib/api/server/normalization";
+import { POST_CONFIRMATION, STATUS_CONFIG } from "@/lib/constants/instance-status";
+import type { InstanceStatus } from "@/lib/types/normalize";
 import ReviewForm from "@/app/components/review/review-form";
 
 type Props = { params: Promise<{ id: string; locale: string }> };
@@ -21,23 +23,18 @@ export default async function ReviewPage({ params }: Props) {
     notFound();
   }
 
+  if (dataset.status && POST_CONFIRMATION.includes(dataset.status)) {
+    redirect(`/${locale}/process/${id}`);
+  }
+
   const { suggested_config, suggestion_display } = dataset;
   const columnKeys = Object.keys(suggested_config.column_config);
   const rowCount = suggestion_display.row_count;
 
-  const STATUS_BANNER: Partial<Record<string, { message: string; style: string }>> = {
-    CONFIRMED:           { message: t("statusConfirmed"),         style: "bg-blue-50 border-blue-200 text-blue-800" },
-    PENDING:             { message: t("statusPending"),           style: "bg-zinc-50 border-border text-ink-muted" },
-    FAILED:              { message: t("statusFailed"),            style: "bg-red-50 border-red-200 text-red-800" },
-    BLOCKED:             { message: t("statusBlocked"),           style: "bg-amber-50 border-amber-200 text-amber-800" },
-    PROFILING:           { message: t("statusProfiling"),         style: "bg-blue-50 border-blue-200 text-blue-800" },
-    PROFILED:            { message: t("statusProfiled"),          style: "bg-blue-50 border-blue-200 text-blue-800" },
-    NORMALIZING:         { message: t("statusNormalizing"),       style: "bg-blue-50 border-blue-200 text-blue-800" },
-    READY:               { message: t("statusReady"),             style: "bg-green-50 border-green-200 text-green-800" },
-    READY_WITH_WARNINGS: { message: t("statusReadyWithWarnings"), style: "bg-amber-50 border-amber-200 text-amber-800" },
-  };
-
-  const banner = dataset.status ? STATUS_BANNER[dataset.status] : undefined;
+  const statusMeta = dataset.status ? STATUS_CONFIG[dataset.status as InstanceStatus] : undefined;
+  const banner = statusMeta
+    ? { message: t(statusMeta.translationKey as Parameters<typeof t>[0]), style: statusMeta.bannerStyle }
+    : undefined;
 
   return (
     <div className="flex min-h-screen flex-col">

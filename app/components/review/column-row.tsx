@@ -2,7 +2,9 @@
 
 import { useTranslations } from "next-intl";
 import type { ColumnConfig, SuggestedColumnDisplay } from "@/lib/types/normalize";
-import { TYPE_COLOR, TypeSelector, ConfigEditor } from "./column-config-editor";
+import { TYPE_COLOR } from "@/lib/constants/column-type-colors";
+import { TypeSelector, ConfigEditor } from "./column-config-editor";
+import { fillColor, countColor, colLetter, isDiff } from "@/lib/utils";
 
 type Props = {
   columnKey: string;
@@ -14,38 +16,10 @@ type Props = {
   onChange: (config: ColumnConfig) => void;
 };
 
-const COLUMN_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-function colLetter(index: number): string {
-  let result = "";
-  let n = index;
-  do {
-    result = COLUMN_LETTERS[n % 26] + result;
-    n = Math.floor(n / 26) - 1;
-  } while (n >= 0);
-  return result;
-}
-
-function fillColor(pct: number): string {
-  if (pct >= 100) return "text-green-600 font-medium";
-  if (pct >= 90)  return "text-green-500";
-  if (pct >= 70)  return "text-ink-muted";
-  if (pct >= 50)  return "text-amber-500";
-  return "text-red-500 font-medium";
-}
-
-function countColor(count: number, total: number): string {
-  if (total === 0) return "text-ink-muted";
-  const ratio = count / total;
-  if (ratio >= 0.2) return "text-red-500";
-  if (ratio >= 0.05) return "text-amber-500";
-  return "text-amber-400";
-}
-
 export default function ColumnRow({ columnKey, index, display, config, suggestedConfig, rowCount, onChange }: Props) {
   const t = useTranslations("review");
 
-  const isDirty = JSON.stringify(config) !== JSON.stringify(suggestedConfig);
+  const isDirty = isDiff(config, suggestedConfig);
   const fillPct = rowCount > 0 ? (display.counts.non_null_count / rowCount) * 100 : 0;
   const fillLabel = fillPct === 100 ? "100%" : `${fillPct.toFixed(1)}%`;
   const nullCount = display.counts.null_count;
@@ -53,7 +27,7 @@ export default function ColumnRow({ columnKey, index, display, config, suggested
   const extraNullish = nullishCount > nullCount ? nullishCount - nullCount : 0;
   const nonNullishCount = display.counts.non_nullish_count;
   const showNonNullish = nonNullishCount !== display.counts.non_null_count;
-  const colors = TYPE_COLOR[config.type] ?? TYPE_COLOR.string;
+  const colors = TYPE_COLOR[config.type];
   const label = display.label || columnKey;
 
   return (

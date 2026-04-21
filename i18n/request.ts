@@ -7,7 +7,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
     ? (requested as Locale)
     : defaultLocale;
 
-  const [common, home, blog, contact, privacy, terms, dataProtection, review] =
+  const [common, home, blog, contact, privacy, terms, dataProtection, review, processing] =
     await Promise.all([
       import(`./messages/${locale}/common.json`),
       import(`./messages/${locale}/home.json`),
@@ -17,6 +17,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
       import(`./messages/${locale}/terms.json`),
       import(`./messages/${locale}/data-protection.json`),
       import(`./messages/${locale}/review.json`),
+      import(`./messages/${locale}/processing.json`),
     ]);
 
   return {
@@ -30,6 +31,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
       terms: terms.default,
       dataProtection: dataProtection.default,
       review: review.default,
+      processing: processing.default,
     },
   };
 });

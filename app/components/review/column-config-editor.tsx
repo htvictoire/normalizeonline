@@ -3,20 +3,10 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import type { ColumnConfig, GroupingStyle } from "@/lib/types/normalize";
+import { TYPE_COLOR } from "@/lib/constants/column-type-colors";
+import { getBoolOptions } from "@/lib/utils";
 import FieldSelect from "./field-select";
 import FieldTokens from "./field-tokens";
-
-export const TYPE_COLOR: Record<string, { circle: string; badge: string }> = {
-  string:     { circle: "bg-zinc-200 text-zinc-600",     badge: "bg-zinc-100 text-zinc-500" },
-  boolean:    { circle: "bg-green-200 text-green-800",   badge: "bg-green-100 text-green-700" },
-  integer:    { circle: "bg-blue-200 text-blue-800",     badge: "bg-blue-100 text-blue-700" },
-  decimal:    { circle: "bg-blue-200 text-blue-800",     badge: "bg-blue-100 text-blue-700" },
-  signed:     { circle: "bg-blue-200 text-blue-800",     badge: "bg-blue-100 text-blue-700" },
-  currency:   { circle: "bg-indigo-200 text-indigo-800", badge: "bg-indigo-100 text-indigo-700" },
-  percentage: { circle: "bg-cyan-200 text-cyan-800",     badge: "bg-cyan-100 text-cyan-700" },
-  accounting: { circle: "bg-amber-200 text-amber-800",   badge: "bg-amber-100 text-amber-700" },
-  date:       { circle: "bg-purple-200 text-purple-800", badge: "bg-purple-100 text-purple-700" },
-};
 
 type ColumnType = ColumnConfig["type"];
 
@@ -67,7 +57,7 @@ function withCustom(options: { value: string; label: string }[], value: string) 
 export function TypeSelector({ config, onChange }: { config: ColumnConfig; onChange: (c: ColumnConfig) => void }) {
   const t = useTranslations("review");
   const [open, setOpen] = useState(false);
-  const colors = TYPE_COLOR[config.type] ?? TYPE_COLOR.string;
+  const colors = TYPE_COLOR[config.type] ;
   const types: ColumnType[] = ["string", "boolean", "integer", "decimal", "currency", "percentage", "signed", "accounting", "date"];
 
   return (
@@ -90,7 +80,7 @@ export function TypeSelector({ config, onChange }: { config: ColumnConfig; onCha
         <div className="absolute left-0 top-full z-20 pt-1">
           <div className="min-w-[9rem] rounded-xl border border-border bg-canvas p-1.5 shadow-[0_24px_50px_-35px_rgba(15,30,53,0.7)]">
             {types.map((type) => {
-              const tc = TYPE_COLOR[type] ?? TYPE_COLOR.string;
+              const tc = TYPE_COLOR[type] ;
               return (
                 <button
                   type="button"
@@ -118,10 +108,7 @@ export function ConfigEditor({ config, onChange }: { config: ColumnConfig; onCha
     { value: "western", label: t("groupingWestern") },
     { value: "indian",  label: t("groupingIndian") },
   ];
-  const boolOptions = [
-    { value: "true",  label: t("yes") },
-    { value: "false", label: t("no") },
-  ];
+  const boolOptions = getBoolOptions(t);
 
   function patch(fields: Partial<ColumnConfig>) {
     onChange({ ...config, ...fields } as ColumnConfig);
@@ -134,23 +121,23 @@ export function ConfigEditor({ config, onChange }: { config: ColumnConfig; onCha
     case "boolean":
       return (
         <div className="mt-3 flex flex-col gap-2">
-          <FieldTokens label={t("trueTokens")} tokens={config.true_tokens} onChange={(v) => patch({ true_tokens: v } as never)} />
-          <FieldTokens label={t("falseTokens")} tokens={config.false_tokens} onChange={(v) => patch({ false_tokens: v } as never)} />
+          <FieldTokens label={t("trueTokens")} tokens={config.true_tokens} onChange={(v) => patch({ true_tokens: v } as ColumnConfig)} />
+          <FieldTokens label={t("falseTokens")} tokens={config.false_tokens} onChange={(v) => patch({ false_tokens: v } as ColumnConfig)} />
         </div>
       );
 
     case "date":
       return (
         <div className="mt-3">
-          <FieldSelect label={t("dateFormat")} value={config.date_format} options={withCustom(DATE_FORMAT_OPTIONS, config.date_format)} onChange={(v) => patch({ date_format: v } as never)} />
+          <FieldSelect label={t("dateFormat")} value={config.date_format} options={withCustom(DATE_FORMAT_OPTIONS, config.date_format)} onChange={(v) => patch({ date_format: v } as ColumnConfig)} />
         </div>
       );
 
     case "integer":
       return (
         <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
-          <FieldSelect label={t("thousands")} value={config.thousand_separator} options={withCustom(THOUSAND_SEP_OPTIONS, config.thousand_separator)} onChange={(v) => patch({ thousand_separator: v } as never)} />
-          <FieldSelect label={t("groupingStyle")} value={config.grouping_style} options={groupingOptions} onChange={(v) => patch({ grouping_style: v as GroupingStyle } as never)} />
+          <FieldSelect label={t("thousands")} value={config.thousand_separator} options={withCustom(THOUSAND_SEP_OPTIONS, config.thousand_separator)} onChange={(v) => patch({ thousand_separator: v } as ColumnConfig)} />
+          <FieldSelect label={t("groupingStyle")} value={config.grouping_style} options={groupingOptions} onChange={(v) => patch({ grouping_style: v as GroupingStyle } as ColumnConfig)} />
         </div>
       );
 
@@ -159,10 +146,10 @@ export function ConfigEditor({ config, onChange }: { config: ColumnConfig; onCha
     case "percentage":
       return (
         <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
-          <FieldSelect label={t("decimal")} value={config.decimal_separator} options={withCustom(DECIMAL_SEP_OPTIONS, config.decimal_separator)} onChange={(v) => patch({ decimal_separator: v } as never)} />
-          <FieldSelect label={t("thousands")} value={config.thousand_separator} options={withCustom(THOUSAND_SEP_OPTIONS, config.thousand_separator)} onChange={(v) => patch({ thousand_separator: v } as never)} />
-          <FieldSelect label={t("groupingStyle")} value={config.grouping_style} options={groupingOptions} onChange={(v) => patch({ grouping_style: v as GroupingStyle } as never)} />
-          <FieldSelect label={t("allowLeadingDecimal")} value={String(config.allow_leading_decimal_point)} options={boolOptions} onChange={(v) => patch({ allow_leading_decimal_point: v === "true" } as never)} />
+          <FieldSelect label={t("decimal")} value={config.decimal_separator} options={withCustom(DECIMAL_SEP_OPTIONS, config.decimal_separator)} onChange={(v) => patch({ decimal_separator: v } as ColumnConfig)} />
+          <FieldSelect label={t("thousands")} value={config.thousand_separator} options={withCustom(THOUSAND_SEP_OPTIONS, config.thousand_separator)} onChange={(v) => patch({ thousand_separator: v } as ColumnConfig)} />
+          <FieldSelect label={t("groupingStyle")} value={config.grouping_style} options={groupingOptions} onChange={(v) => patch({ grouping_style: v as GroupingStyle } as ColumnConfig)} />
+          <FieldSelect label={t("allowLeadingDecimal")} value={String(config.allow_leading_decimal_point)} options={boolOptions} onChange={(v) => patch({ allow_leading_decimal_point: v === "true" } as ColumnConfig)} />
         </div>
       );
 
@@ -171,14 +158,14 @@ export function ConfigEditor({ config, onChange }: { config: ColumnConfig; onCha
       return (
         <div className="mt-3 flex flex-col gap-2">
           <div className="flex flex-wrap gap-x-5 gap-y-2">
-            <FieldSelect label={t("decimal")} value={config.decimal_separator} options={withCustom(DECIMAL_SEP_OPTIONS, config.decimal_separator)} onChange={(v) => patch({ decimal_separator: v } as never)} />
-            <FieldSelect label={t("thousands")} value={config.thousand_separator} options={withCustom(THOUSAND_SEP_OPTIONS, config.thousand_separator)} onChange={(v) => patch({ thousand_separator: v } as never)} />
-            <FieldSelect label={t("groupingStyle")} value={config.grouping_style} options={groupingOptions} onChange={(v) => patch({ grouping_style: v as GroupingStyle } as never)} />
-            <FieldSelect label={t("allowLeadingDecimal")} value={String(config.allow_leading_decimal_point)} options={boolOptions} onChange={(v) => patch({ allow_leading_decimal_point: v === "true" } as never)} />
-            <FieldSelect label={t("parenthesesNegative")} value={String(config.parentheses_as_negative)} options={boolOptions} onChange={(v) => patch({ parentheses_as_negative: v === "true" } as never)} />
+            <FieldSelect label={t("decimal")} value={config.decimal_separator} options={withCustom(DECIMAL_SEP_OPTIONS, config.decimal_separator)} onChange={(v) => patch({ decimal_separator: v } as ColumnConfig)} />
+            <FieldSelect label={t("thousands")} value={config.thousand_separator} options={withCustom(THOUSAND_SEP_OPTIONS, config.thousand_separator)} onChange={(v) => patch({ thousand_separator: v } as ColumnConfig)} />
+            <FieldSelect label={t("groupingStyle")} value={config.grouping_style} options={groupingOptions} onChange={(v) => patch({ grouping_style: v as GroupingStyle } as ColumnConfig)} />
+            <FieldSelect label={t("allowLeadingDecimal")} value={String(config.allow_leading_decimal_point)} options={boolOptions} onChange={(v) => patch({ allow_leading_decimal_point: v === "true" } as ColumnConfig)} />
+            <FieldSelect label={t("parenthesesNegative")} value={String(config.parentheses_as_negative)} options={boolOptions} onChange={(v) => patch({ parentheses_as_negative: v === "true" } as ColumnConfig)} />
           </div>
-          <FieldTokens label={t("positive")} tokens={config.positive_markers} onChange={(v) => patch({ positive_markers: v } as never)} />
-          <FieldTokens label={t("negative")} tokens={config.negative_markers} onChange={(v) => patch({ negative_markers: v } as never)} />
+          <FieldTokens label={t("positive")} tokens={config.positive_markers} onChange={(v) => patch({ positive_markers: v } as ColumnConfig)} />
+          <FieldTokens label={t("negative")} tokens={config.negative_markers} onChange={(v) => patch({ negative_markers: v } as ColumnConfig)} />
         </div>
       );
   }

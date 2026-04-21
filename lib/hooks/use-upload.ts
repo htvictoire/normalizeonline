@@ -6,6 +6,7 @@ import { useRouter } from "@/i18n/navigation";
 import { getUploadUrl, createDataset } from "@/lib/api/endpoints/normalization";
 import { uploadToS3 } from "@/lib/storage";
 import type { Dataset } from "@/lib/types/dataset";
+import type { FileFormat } from "@/lib/types/normalize";
 
 export type UploadPhase =
   | { phase: "idle" }
@@ -21,14 +22,14 @@ const SIZE_LIMITS: Record<string, number> = {
   json: 10 * 1024 * 1024,
 };
 
-export function getExtension(file: File): string {
+function getExtension(file: File): string {
   return file.name.split(".").pop()?.toLowerCase() ?? "";
 }
 
-export function getFileType(ext: string): "CSV" | "XLSX" | "JSON" | null {
-  if (ext === "csv")  return "CSV";
-  if (ext === "xlsx") return "XLSX";
-  if (ext === "json") return "JSON";
+function getFileType(ext: string): FileFormat | null {
+  if (ext === "csv")  return "csv";
+  if (ext === "xlsx") return "excel";
+  if (ext === "json") return "json";
   return null;
 }
 
@@ -66,10 +67,10 @@ export function useUpload() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (state.phase === "success") {
-      router.push(`/review/${state.dataset.id}`);
-    }
-  }, [state, router]);
+    const handlePopState = () => setState({ phase: "idle" });
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   const handleFile = useCallback(
     (file: File) => {
@@ -124,6 +125,7 @@ export function useUpload() {
       });
 
       setState({ phase: "success", dataset });
+      router.push(`/review/${dataset.id}`);
     } catch {
       setState({ phase: "error", message: t("errors.generic"), file });
     }

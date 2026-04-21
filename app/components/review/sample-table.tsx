@@ -15,7 +15,7 @@ export default function SampleTable({ sampleRows }: Props) {
             <tr className="border-b border-border bg-surface">
               {headers.map((h, i) => (
                 <th
-                  key={i}
+                  key={`${h}-${i}`}
                   className="whitespace-nowrap px-4 py-2.5 font-semibold text-ink"
                 >
                   {h}

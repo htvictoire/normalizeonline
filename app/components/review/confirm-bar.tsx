@@ -23,7 +23,7 @@ export default function ConfirmBar({ datasetId, currentConfig, changeCount }: Pr
     setError(null);
     try {
       await confirmDataset(datasetId, currentConfig);
-      router.push("/");
+      router.replace(`/process/${datasetId}`);
     } catch {
       setError(t("errorGeneric"));
     } finally {

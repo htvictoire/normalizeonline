@@ -142,7 +142,10 @@ export default function UploadPad() {
             <UploadArt className="w-full h-auto" />
           </div>
           <div className="mt-6 text-base font-semibold text-ink">{state.file.name}</div>
-          <div className="mt-2 text-sm text-ink-muted">{t("analyzing")}</div>
+          <div className="mt-4 flex justify-center">
+            <div className="h-6 w-6 rounded-full border-[3px] border-brand/20 border-t-brand animate-[spin_0.5s_linear_infinite]" />
+          </div>
+          <div className="mt-3 text-sm text-ink-muted">{t("analyzing")}</div>
         </>
       )}
 
