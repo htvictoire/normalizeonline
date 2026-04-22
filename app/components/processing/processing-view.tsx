@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, Fragment } from "react";
+import { useState, useEffect, useRef, Fragment } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { getDataset, getDownloadUrl } from "@/lib/api/endpoints/normalization";
@@ -35,25 +35,6 @@ function StepDot({ state, color }: { state: "done" | "active" | "pending"; color
   return <div className="h-7 w-7 shrink-0 rounded-full border-2 border-border bg-canvas" />;
 }
 
-function TerminalIcon({ status }: { status: InstanceStatus }) {
-  if (status === "READY" || status === "READY_WITH_WARNINGS") {
-    return (
-      <div className={`flex h-12 w-12 items-center justify-center rounded-full ${status === "READY" ? "bg-green-100" : "bg-amber-100"}`}>
-        <svg viewBox="0 0 24 24" className={`h-6 w-6 ${status === "READY" ? "text-green-600" : "text-amber-600"}`} fill="none" stroke="currentColor" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="m5 13 4 4L19 7" />
-        </svg>
-      </div>
-    );
-  }
-  return (
-    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
-      <svg viewBox="0 0 24 24" className="h-6 w-6 text-red-600" fill="none" stroke="currentColor" strokeWidth="2">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-      </svg>
-    </div>
-  );
-}
-
 export default function ProcessingView({ dataset: initialDataset }: { dataset: Dataset }) {
   const t = useTranslations("processing");
   const router = useRouter();
@@ -61,60 +42,69 @@ export default function ProcessingView({ dataset: initialDataset }: { dataset: D
   const [progress, setProgress] = useState(0);
   const [progressVisible, setProgressVisible] = useState(!TERMINAL.includes((initialDataset.status ?? "") as InstanceStatus));
   const creepRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const pollRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const status = (dataset.status ?? "CONFIRMED") as InstanceStatus;
   const isTerminal = TERMINAL.includes(status);
   const stageIndex = getStageIndex(status);
-
-  const poll = useCallback(async () => {
-    try {
-      const fresh = await getDataset(dataset.id);
-      setDataset(fresh);
-      if (IN_FLIGHT.includes((fresh.status ?? "") as InstanceStatus)) {
-        pollRef.current = setTimeout(poll, 2000);
-      }
-    } catch {
-      pollRef.current = setTimeout(poll, 3000);
-    }
-  }, [dataset.id]);
+  const checkpoint = STATUS_CONFIG[status]?.checkpoint;
+  const effectiveProgress = checkpoint ? Math.max(progress, checkpoint.floor) : progress;
 
   useEffect(() => {
+    let pollTimer: ReturnType<typeof setTimeout> | null = null;
+    let cancelled = false;
+
+    async function pollOnce() {
+      try {
+        const fresh = await getDataset(dataset.id);
+        if (cancelled) return;
+
+        setDataset(fresh);
+        if (IN_FLIGHT.includes((fresh.status ?? "") as InstanceStatus)) {
+          pollTimer = setTimeout(pollOnce, 2000);
+        }
+      } catch {
+        if (cancelled) return;
+        pollTimer = setTimeout(pollOnce, 3000);
+      }
+    }
+
     if (!isTerminal) {
-      pollRef.current = setTimeout(poll, 2000);
+      pollTimer = setTimeout(pollOnce, 2000);
     } else {
       hideTimerRef.current = setTimeout(() => setProgressVisible(false), 1000);
     }
+
     return () => {
-      if (pollRef.current) clearTimeout(pollRef.current);
+      cancelled = true;
+      if (pollTimer) clearTimeout(pollTimer);
       if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
     };
-  }, [isTerminal, poll]);
+  }, [dataset.id, isTerminal]);
 
   useEffect(() => {
-    const cp = STATUS_CONFIG[status]?.checkpoint;
-    if (!cp) return;
+    if (!checkpoint) return;
 
     if (creepRef.current) clearInterval(creepRef.current);
-    setProgress((prev) => Math.max(prev, cp.floor));
 
-    if (cp.floor === cp.ceil) return;
+    if (checkpoint.floor === checkpoint.ceil) return;
 
     creepRef.current = setInterval(() => {
       setProgress((prev) => {
-        if (prev >= cp.ceil) {
+        const next = Math.max(prev, checkpoint.floor);
+        if (next >= checkpoint.ceil) {
           clearInterval(creepRef.current!);
-          return prev;
+          return next;
         }
-        return prev + 0.15;
+        return next + 0.15;
       });
     }, 400);
 
     return () => { if (creepRef.current) clearInterval(creepRef.current); };
-  }, [status]);
+  }, [checkpoint]);
 
   const statusKey = (STATUS_CONFIG[status]?.translationKey ?? "statusFailed") as Parameters<typeof t>[0];
+  const showProfilingSpinner = !isTerminal && status === "PROFILING";
 
   const profiling = dataset.profiling_output;
   const rowCount = profiling?.row_count ?? dataset.suggestion_display?.row_count ?? 0;
@@ -176,7 +166,7 @@ export default function ProcessingView({ dataset: initialDataset }: { dataset: D
               i < stageIndex || (i === stageIndex && isTerminal) ? "done" : i === stageIndex ? "active" : "pending";
             const segSize = 100 / (STAGES.length - 1);
             const connectorFill = i > 0
-              ? Math.min(Math.max((progress - (i - 1) * segSize) / segSize * 100, 0), 100)
+              ? Math.min(Math.max((effectiveProgress - (i - 1) * segSize) / segSize * 100, 0), 100)
               : 0;
             return (
               <Fragment key={stage.key}>
@@ -200,9 +190,15 @@ export default function ProcessingView({ dataset: initialDataset }: { dataset: D
         </div>
       </div>
 
+      {showProfilingSpinner && (
+        <div className="mt-4 flex justify-center">
+          <div className="h-6 w-6 rounded-full border-[3px] border-brand/20 border-t-brand animate-[spin_0.5s_linear_infinite]" />
+        </div>
+      )}
+
       {/* Status message */}
       <div className="mt-6">
-        {!isTerminal && (
+        {!isTerminal && !showProfilingSpinner && (
           <p className="text-sm text-ink-muted">{t(statusKey)}</p>
         )}
       </div>

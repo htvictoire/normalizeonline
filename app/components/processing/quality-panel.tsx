@@ -35,6 +35,20 @@ const ARC_SEGMENTS    = 40;
 const ARC_FRACTION    = 0.75;
 const ARC_GAP_OVERLAP = 0.8;
 
+function gaugeTextColor(
+  ratio: number,
+  color: string,
+  gradient?: "green-red" | "red-green"
+): string | undefined {
+  const clamped = Math.min(Math.max(ratio, 0), 1);
+  if (clamped <= 0) return undefined;
+  if (!gradient) return color;
+
+  const filled = Math.round(ARC_SEGMENTS * clamped);
+  const tip = filled > 0 ? (filled - 1) / (ARC_SEGMENTS - 1) : 0;
+  return gradientColor(tip, gradient);
+}
+
 function ArcGauge({ ratio, value, label, color, gradient }: {
   ratio: number;
   value: string;
@@ -51,6 +65,8 @@ function ArcGauge({ ratio, value, label, color, gradient }: {
   const segLen  = circumference * (segDeg / 360) + ARC_GAP_OVERLAP;
   const clamped = Math.min(Math.max(ratio, 0), 1);
   const filled  = Math.round(ARC_SEGMENTS * clamped);
+  const textColor = gaugeTextColor(clamped, color, gradient);
+  const textStyle = textColor ? { color: textColor } : undefined;
 
   return (
     <div className="flex flex-col items-center gap-2">
@@ -88,12 +104,12 @@ function ArcGauge({ ratio, value, label, color, gradient }: {
           }
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="font-bold tabular-nums text-ink" style={{ fontSize: ARC_FONT_SIZE }}>
+          <span className="font-bold tabular-nums text-ink" style={{ fontSize: ARC_FONT_SIZE, ...textStyle }}>
             {value}
           </span>
         </div>
       </div>
-      <p className="text-center text-xs leading-tight text-ink-muted">{label}</p>
+      <p className="text-center text-[0.9375rem] font-medium leading-tight text-ink">{label}</p>
     </div>
   );
 }

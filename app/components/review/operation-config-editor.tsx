@@ -14,8 +14,9 @@ type Props = {
 
 export default function OperationConfigEditor({ config, onChange }: Props) {
   const t = useTranslations("review");
+  const tr = useTranslations();
 
-  const boolOptions = getBoolOptions(t);
+  const boolOptions = getBoolOptions(tr);
   const traceModeOptions = [
     { value: "full",   label: t("traceFull") },
     { value: "sparse", label: t("traceSparse") },

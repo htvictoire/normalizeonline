@@ -49,6 +49,7 @@
     "change": "Change",
     "upload": "Upload",
     "chooseAnother": "Choose another file",
+    "uploadingLabel": "Uploading your file…",
     "analyzing": "Analyzing your file…",
     "redirecting": "Taking you to the review page…",
     "successHeading": "Ready to configure",

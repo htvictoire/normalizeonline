@@ -25,7 +25,7 @@ export default function SampleTable({ sampleRows }: Props) {
           </thead>
           <tbody>
             {rows.map((row, ri) => (
-              <tr key={row[0] ?? ri} className="border-b border-border last:border-0 hover:bg-surface/60">
+              <tr key={`sample-row-${ri}`} className="border-b border-border last:border-0 hover:bg-surface/60">
                 {row.map((cell, ci) => (
                   <td
                     key={`${ri}-${ci}`}

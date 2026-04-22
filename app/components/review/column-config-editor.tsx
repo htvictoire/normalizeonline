@@ -50,6 +50,9 @@ const THOUSAND_SEP_OPTIONS = [
   { value: "'", label: "' (apostrophe)  1'000'000" },
 ];
 
+const WIDE_SELECT_WIDTH = "w-48";
+const GROUPING_SELECT_WIDTH = "w-40";
+
 function withCustom(options: { value: string; label: string }[], value: string) {
   return options.some((o) => o.value === value) ? options : [...options, { value, label: value }];
 }
@@ -103,12 +106,13 @@ export function TypeSelector({ config, onChange }: { config: ColumnConfig; onCha
 
 export function ConfigEditor({ config, onChange }: { config: ColumnConfig; onChange: (c: ColumnConfig) => void }) {
   const t = useTranslations("review");
+  const tr = useTranslations();
 
   const groupingOptions = [
     { value: "western", label: t("groupingWestern") },
     { value: "indian",  label: t("groupingIndian") },
   ];
-  const boolOptions = getBoolOptions(t);
+  const boolOptions = getBoolOptions(tr);
 
   function patch(fields: Partial<ColumnConfig>) {
     onChange({ ...config, ...fields } as ColumnConfig);
@@ -129,15 +133,33 @@ export function ConfigEditor({ config, onChange }: { config: ColumnConfig; onCha
     case "date":
       return (
         <div className="mt-3">
-          <FieldSelect label={t("dateFormat")} value={config.date_format} options={withCustom(DATE_FORMAT_OPTIONS, config.date_format)} onChange={(v) => patch({ date_format: v } as ColumnConfig)} />
+          <FieldSelect
+            label={t("dateFormat")}
+            value={config.date_format}
+            width={WIDE_SELECT_WIDTH}
+            options={withCustom(DATE_FORMAT_OPTIONS, config.date_format)}
+            onChange={(v) => patch({ date_format: v } as ColumnConfig)}
+          />
         </div>
       );
 
     case "integer":
       return (
         <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
-          <FieldSelect label={t("thousands")} value={config.thousand_separator} options={withCustom(THOUSAND_SEP_OPTIONS, config.thousand_separator)} onChange={(v) => patch({ thousand_separator: v } as ColumnConfig)} />
-          <FieldSelect label={t("groupingStyle")} value={config.grouping_style} options={groupingOptions} onChange={(v) => patch({ grouping_style: v as GroupingStyle } as ColumnConfig)} />
+          <FieldSelect
+            label={t("thousands")}
+            value={config.thousand_separator}
+            width={WIDE_SELECT_WIDTH}
+            options={withCustom(THOUSAND_SEP_OPTIONS, config.thousand_separator)}
+            onChange={(v) => patch({ thousand_separator: v } as ColumnConfig)}
+          />
+          <FieldSelect
+            label={t("groupingStyle")}
+            value={config.grouping_style}
+            width={GROUPING_SELECT_WIDTH}
+            options={groupingOptions}
+            onChange={(v) => patch({ grouping_style: v as GroupingStyle } as ColumnConfig)}
+          />
         </div>
       );
 
@@ -147,8 +169,20 @@ export function ConfigEditor({ config, onChange }: { config: ColumnConfig; onCha
       return (
         <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
           <FieldSelect label={t("decimal")} value={config.decimal_separator} options={withCustom(DECIMAL_SEP_OPTIONS, config.decimal_separator)} onChange={(v) => patch({ decimal_separator: v } as ColumnConfig)} />
-          <FieldSelect label={t("thousands")} value={config.thousand_separator} options={withCustom(THOUSAND_SEP_OPTIONS, config.thousand_separator)} onChange={(v) => patch({ thousand_separator: v } as ColumnConfig)} />
-          <FieldSelect label={t("groupingStyle")} value={config.grouping_style} options={groupingOptions} onChange={(v) => patch({ grouping_style: v as GroupingStyle } as ColumnConfig)} />
+          <FieldSelect
+            label={t("thousands")}
+            value={config.thousand_separator}
+            width={WIDE_SELECT_WIDTH}
+            options={withCustom(THOUSAND_SEP_OPTIONS, config.thousand_separator)}
+            onChange={(v) => patch({ thousand_separator: v } as ColumnConfig)}
+          />
+          <FieldSelect
+            label={t("groupingStyle")}
+            value={config.grouping_style}
+            width={GROUPING_SELECT_WIDTH}
+            options={groupingOptions}
+            onChange={(v) => patch({ grouping_style: v as GroupingStyle } as ColumnConfig)}
+          />
           <FieldSelect label={t("allowLeadingDecimal")} value={String(config.allow_leading_decimal_point)} options={boolOptions} onChange={(v) => patch({ allow_leading_decimal_point: v === "true" } as ColumnConfig)} />
         </div>
       );
@@ -159,8 +193,20 @@ export function ConfigEditor({ config, onChange }: { config: ColumnConfig; onCha
         <div className="mt-3 flex flex-col gap-2">
           <div className="flex flex-wrap gap-x-5 gap-y-2">
             <FieldSelect label={t("decimal")} value={config.decimal_separator} options={withCustom(DECIMAL_SEP_OPTIONS, config.decimal_separator)} onChange={(v) => patch({ decimal_separator: v } as ColumnConfig)} />
-            <FieldSelect label={t("thousands")} value={config.thousand_separator} options={withCustom(THOUSAND_SEP_OPTIONS, config.thousand_separator)} onChange={(v) => patch({ thousand_separator: v } as ColumnConfig)} />
-            <FieldSelect label={t("groupingStyle")} value={config.grouping_style} options={groupingOptions} onChange={(v) => patch({ grouping_style: v as GroupingStyle } as ColumnConfig)} />
+            <FieldSelect
+              label={t("thousands")}
+              value={config.thousand_separator}
+              width={WIDE_SELECT_WIDTH}
+              options={withCustom(THOUSAND_SEP_OPTIONS, config.thousand_separator)}
+              onChange={(v) => patch({ thousand_separator: v } as ColumnConfig)}
+            />
+            <FieldSelect
+              label={t("groupingStyle")}
+              value={config.grouping_style}
+              width={GROUPING_SELECT_WIDTH}
+              options={groupingOptions}
+              onChange={(v) => patch({ grouping_style: v as GroupingStyle } as ColumnConfig)}
+            />
             <FieldSelect label={t("allowLeadingDecimal")} value={String(config.allow_leading_decimal_point)} options={boolOptions} onChange={(v) => patch({ allow_leading_decimal_point: v === "true" } as ColumnConfig)} />
             <FieldSelect label={t("parenthesesNegative")} value={String(config.parentheses_as_negative)} options={boolOptions} onChange={(v) => patch({ parentheses_as_negative: v === "true" } as ColumnConfig)} />
           </div>

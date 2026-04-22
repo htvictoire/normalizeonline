@@ -12,7 +12,8 @@ function formatSize(bytes: number): string {
 
 export default function UploadPad() {
   const t = useTranslations("home.uploadPad");
-  const { state, isDragging, setIsDragging, inputRef, handleFile, handleUpload, reset } = useUpload();
+  const { state, isDragging, setIsDragging, inputRef, handleFile, handleUpload, handleRetry, reset } =
+    useUpload();
 
   const handleDrop = useCallback(
     (e: DragEvent<HTMLDivElement>) => {
@@ -132,6 +133,7 @@ export default function UploadPad() {
               />
             </div>
             <div className="mt-2 text-sm text-ink-muted">{state.progress}%</div>
+            <div className="mt-1 text-sm text-ink-muted">{t("uploadingLabel")}</div>
           </div>
         </>
       )}
@@ -166,7 +168,7 @@ export default function UploadPad() {
           <div className="mt-6 flex justify-center gap-3">
             {state.file && (
               <button
-                onClick={() => handleFile(state.file!)}
+                onClick={handleRetry}
                 className="rounded-md border border-brand px-8 py-2.5 text-sm font-medium text-brand hover:border-ink hover:text-ink"
               >
                 {t("retry")}

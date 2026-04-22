@@ -3,10 +3,23 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { getUploadUrl, createDataset } from "@/lib/api/endpoints/normalization";
+import {
+  getUploadUrl,
+  createDataset,
+  type CreateDatasetPayload,
+} from "@/lib/api/endpoints/normalization";
 import { uploadToS3 } from "@/lib/storage";
 import type { Dataset } from "@/lib/types/dataset";
 import type { FileFormat } from "@/lib/types/normalize";
+
+type RetryAction = "upload" | "process";
+
+type UploadedSource = {
+  file: File;
+  fileType: FileFormat;
+  s3Key: string;
+  sourceChecksum?: string;
+};
 
 export type UploadPhase =
   | { phase: "idle" }
@@ -14,10 +27,10 @@ export type UploadPhase =
   | { phase: "uploading"; file: File; progress: number }
   | { phase: "processing"; file: File }
   | { phase: "success"; dataset: Dataset }
-  | { phase: "error"; message: string; file?: File };
+  | { phase: "error"; message: string; file?: File; retryAction: RetryAction };
 
 const SIZE_LIMITS: Record<string, number> = {
-  csv:  50 * 1024 * 1024,
+  csv:  150 * 1024 * 1024,
   xlsx: 15 * 1024 * 1024,
   json: 10 * 1024 * 1024,
 };
@@ -51,6 +64,21 @@ function getBaseName(filename: string): string {
   return filename.replace(/\.[^.]+$/, "");
 }
 
+function toCreateDatasetPayload(uploadedSource: UploadedSource): CreateDatasetPayload {
+  if (!uploadedSource.sourceChecksum) {
+    throw new Error("Missing checksum for uploaded file");
+  }
+
+  return {
+    name: getBaseName(uploadedSource.file.name),
+    original_name: uploadedSource.file.name,
+    file_type: uploadedSource.fileType,
+    s3_key: uploadedSource.s3Key,
+    size_mb: uploadedSource.file.size / (1024 * 1024),
+    source_checksum: uploadedSource.sourceChecksum,
+  };
+}
+
 async function computeChecksum(file: File): Promise<string> {
   const buffer = await file.arrayBuffer();
   const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
@@ -65,6 +93,7 @@ export function useUpload() {
   const [state, setState] = useState<UploadPhase>({ phase: "idle" });
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const uploadedSourceRef = useRef<UploadedSource | null>(null);
 
   useEffect(() => {
     const handlePopState = () => setState({ phase: "idle" });
@@ -74,6 +103,7 @@ export function useUpload() {
 
   const handleFile = useCallback(
     (file: File) => {
+      uploadedSourceRef.current = null;
       const validationError = getValidationError(file);
       const error = validationError
         ? validationError.key === "errors.tooLarge"
@@ -85,53 +115,99 @@ export function useUpload() {
     [t]
   );
 
+  const submitUploadedSource = useCallback(
+    async (uploadedSource: UploadedSource) => {
+      try {
+        setState({ phase: "processing", file: uploadedSource.file });
+
+        if (!uploadedSource.sourceChecksum) {
+          uploadedSource.sourceChecksum = await computeChecksum(uploadedSource.file);
+        }
+
+        const dataset = await createDataset(toCreateDatasetPayload(uploadedSource));
+
+        uploadedSourceRef.current = uploadedSource;
+        setState({ phase: "success", dataset });
+        router.push(`/review/${dataset.id}`);
+      } catch {
+        uploadedSourceRef.current = uploadedSource;
+        setState({
+          phase: "error",
+          message: t("errors.generic"),
+          file: uploadedSource.file,
+          retryAction: "process",
+        });
+      }
+    },
+    [router, t]
+  );
+
+  const startUpload = useCallback(
+    async (file: File) => {
+      const fileType = getFileType(getExtension(file));
+      if (!fileType) {
+        setState({
+          phase: "error",
+          message: t("errors.unsupportedType"),
+          file,
+          retryAction: "upload",
+        });
+        return;
+      }
+
+      uploadedSourceRef.current = null;
+
+      try {
+        setState({ phase: "uploading", file, progress: 0 });
+
+        const checksumPromise = computeChecksum(file);
+        const { url, s3_key } = await getUploadUrl(file.name);
+
+        await uploadToS3(url, file, (progress) => {
+          setState({ phase: "uploading", file, progress });
+        });
+
+        const uploadedSource: UploadedSource = { file, fileType, s3Key: s3_key };
+        uploadedSourceRef.current = uploadedSource;
+        uploadedSource.sourceChecksum = await checksumPromise;
+
+        await submitUploadedSource(uploadedSource);
+      } catch {
+        const uploadSucceeded = uploadedSourceRef.current?.file === file;
+        setState({
+          phase: "error",
+          message: t("errors.generic"),
+          file,
+          retryAction: uploadSucceeded ? "process" : "upload",
+        });
+      }
+    },
+    [submitUploadedSource, t]
+  );
+
   const handleUpload = useCallback(async () => {
     if (state.phase !== "selected" || state.error) return;
+    await startUpload(state.file);
+  }, [startUpload, state]);
 
-    const file = state.file;
-    const fileType = getFileType(getExtension(file));
-    if (!fileType) {
-      setState({ phase: "error", message: t("errors.unsupportedType"), file });
-      return;
+  const handleRetry = useCallback(async () => {
+    if (state.phase !== "error" || !state.file) return;
+
+    if (state.retryAction === "process") {
+      const uploadedSource = uploadedSourceRef.current;
+      if (uploadedSource?.file === state.file) {
+        await submitUploadedSource(uploadedSource);
+        return;
+      }
     }
 
-    try {
-      setState({ phase: "uploading", file, progress: 0 });
+    await startUpload(state.file);
+  }, [startUpload, state, submitUploadedSource]);
 
-      const uploadUrlPromise = getUploadUrl(file.name);
-      const checksumPromise = computeChecksum(file);
+  const reset = useCallback(() => {
+    uploadedSourceRef.current = null;
+    setState({ phase: "idle" });
+  }, []);
 
-      const s3UploadPromise = uploadUrlPromise.then(({ url }) =>
-        uploadToS3(url, file, (progress) => {
-          setState({ phase: "uploading", file, progress });
-        })
-      );
-
-      const [{ s3_key }, source_checksum] = await Promise.all([
-        uploadUrlPromise,
-        checksumPromise,
-        s3UploadPromise,
-      ]);
-
-      setState({ phase: "processing", file });
-
-      const dataset = await createDataset({
-        name: getBaseName(file.name),
-        original_name: file.name,
-        file_type: fileType,
-        s3_key,
-        size_mb: file.size / (1024 * 1024),
-        source_checksum,
-      });
-
-      setState({ phase: "success", dataset });
-      router.push(`/review/${dataset.id}`);
-    } catch {
-      setState({ phase: "error", message: t("errors.generic"), file });
-    }
-  }, [state, t]);
-
-  const reset = useCallback(() => setState({ phase: "idle" }), []);
-
-  return { state, isDragging, setIsDragging, inputRef, handleFile, handleUpload, reset };
+  return { state, isDragging, setIsDragging, inputRef, handleFile, handleUpload, handleRetry, reset };
 }

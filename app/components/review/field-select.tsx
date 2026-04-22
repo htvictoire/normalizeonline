@@ -10,17 +10,19 @@ type Props = {
   options: Option[];
   onChange: (v: string) => void;
   disabled?: boolean;
+  width?: string;
 };
 
-export default function FieldSelect({ label, value, options, onChange, disabled }: Props) {
+export default function FieldSelect({ label, value, options, onChange, disabled, width }: Props) {
   const [open, setOpen] = useState(false);
   const selected = options.find((o) => o.value === value);
+  const hasFixedWidth = Boolean(width);
 
   return (
     <div className="flex items-center gap-2">
       {label && <span className="shrink-0 text-xs font-medium text-ink">{label}</span>}
       <div
-        className="relative"
+        className={`relative ${width ?? ""}`}
         onMouseEnter={() => !disabled && setOpen(true)}
         onMouseLeave={() => setOpen(false)}
       >
@@ -28,7 +30,9 @@ export default function FieldSelect({ label, value, options, onChange, disabled 
           type="button"
           disabled={disabled}
           onClick={() => !disabled && setOpen((v) => !v)}
-          className="flex items-center gap-1.5 rounded-lg border border-border bg-canvas px-2.5 py-1 text-xs text-ink transition-colors hover:border-ink disabled:cursor-not-allowed disabled:opacity-40"
+          className={`flex items-center gap-1.5 rounded-lg border border-border bg-canvas px-2.5 py-1 text-xs text-ink transition-colors hover:border-ink disabled:cursor-not-allowed disabled:opacity-40 ${
+            hasFixedWidth ? "w-full justify-between text-left" : ""
+          }`}
         >
           <span>{selected?.label ?? value}</span>
           <svg
@@ -43,8 +47,12 @@ export default function FieldSelect({ label, value, options, onChange, disabled 
           </svg>
         </button>
         {open && !disabled && (
-          <div className="absolute left-0 top-full z-20 pt-1">
-            <div className="min-w-[9rem] rounded-xl border border-border bg-canvas p-1.5 shadow-[0_24px_50px_-35px_rgba(15,30,53,0.7)]">
+          <div className={`absolute left-0 top-full z-20 pt-1 ${hasFixedWidth ? "w-full" : ""}`}>
+            <div
+              className={`rounded-xl border border-border bg-canvas p-1.5 shadow-[0_24px_50px_-35px_rgba(15,30,53,0.7)] ${
+                hasFixedWidth ? "w-full min-w-full" : "min-w-[9rem]"
+              }`}
+            >
               {options.map((o) => (
                 <button
                   type="button"

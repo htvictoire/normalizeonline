@@ -5,7 +5,8 @@ import type {
   ProfilingOutput, ColumnProfileStats, ColumnProfile, NormalizationIssue, IssueSeverity,
 } from "@/lib/types/normalize";
 import { TYPE_COLOR } from "@/lib/constants/column-type-colors";
-import { fillColor, countColor, colLetter, fmt, pct } from "@/lib/utils";
+import CountBadge from "@/app/components/count-badge";
+import { fillColor, countColor, countBadgeColor, colLetter, fmt, pct } from "@/lib/utils";
 
 const SEVERITY_STYLE: Record<IssueSeverity, string> = {
   ERROR:   "border-red-200 bg-red-50 text-red-800",
@@ -162,14 +163,20 @@ function ColumnCard({ index, stats, rowCount, issues, t }: {
           </div>
           <div className="flex shrink-0 items-center gap-2 tabular-nums">
             {nullCount > 0 && (
-              <span className="text-xs text-ink-muted">
-                <span className={countColor(nullCount, rowCount)}>{fmt(nullCount)}</span> {t("profiling.nulls")}
-              </span>
+              <CountBadge
+                value={fmt(nullCount)}
+                label={t("profiling.nulls")}
+                badgeClassName={countBadgeColor(nullCount, rowCount)}
+                valueClassName={countColor(nullCount, rowCount)}
+              />
             )}
             {extraNullish > 0 && (
-              <span className="text-xs text-ink-muted">
-                <span className={countColor(extraNullish, rowCount)}>{fmt(extraNullish)}</span> {t("profiling.nullish")}
-              </span>
+              <CountBadge
+                value={fmt(extraNullish)}
+                label={t("profiling.nullish")}
+                badgeClassName={countBadgeColor(extraNullish, rowCount)}
+                valueClassName={countColor(extraNullish, rowCount)}
+              />
             )}
             <span className={`text-sm ${fillColor(fp)}`}>{fpLabel}</span>
           </div>

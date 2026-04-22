@@ -3,8 +3,9 @@
 import { useTranslations } from "next-intl";
 import type { ColumnConfig, SuggestedColumnDisplay } from "@/lib/types/normalize";
 import { TYPE_COLOR } from "@/lib/constants/column-type-colors";
+import CountBadge from "@/app/components/count-badge";
 import { TypeSelector, ConfigEditor } from "./column-config-editor";
-import { fillColor, countColor, colLetter, isDiff } from "@/lib/utils";
+import { fillColor, countColor, countBadgeColor, colLetter, isDiff } from "@/lib/utils";
 
 type Props = {
   columnKey: string;
@@ -55,19 +56,28 @@ export default function ColumnRow({ columnKey, index, display, config, suggested
           </div>
           <div className="flex shrink-0 items-center gap-2 tabular-nums">
             {nullCount > 0 && (
-              <span className="text-xs text-ink-muted">
-                <span className={countColor(nullCount, rowCount)}>{nullCount}</span> {t("nullsWord")}
-              </span>
+              <CountBadge
+                value={nullCount}
+                label={t("nullsWord")}
+                badgeClassName={countBadgeColor(nullCount, rowCount)}
+                valueClassName={countColor(nullCount, rowCount)}
+              />
             )}
             {extraNullish > 0 && (
-              <span className="text-xs text-ink-muted">
-                <span className={countColor(extraNullish, rowCount)}>{extraNullish}</span> {t("nullishWord")}
-              </span>
+              <CountBadge
+                value={extraNullish}
+                label={t("nullishWord")}
+                badgeClassName={countBadgeColor(extraNullish, rowCount)}
+                valueClassName={countColor(extraNullish, rowCount)}
+              />
             )}
             {showNonNullish && (
-              <span className="text-xs text-ink-muted">
-                <span className="text-amber-400">{nonNullishCount}</span> {t("nonNullishWord")}
-              </span>
+              <CountBadge
+                value={nonNullishCount}
+                label={t("nonNullishWord")}
+                badgeClassName="border-brand/15 bg-brand/5"
+                valueClassName="text-brand"
+              />
             )}
             <span className={`text-sm ${fillColor(fillPct)}`}>{fillLabel}</span>
           </div>

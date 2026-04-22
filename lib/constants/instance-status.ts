@@ -13,8 +13,8 @@ type StatusMeta = {
 
 export const STAGE_COLORS: Record<StageKey, StageColor> = {
   confirmed:   { done: "bg-brand",      activeBorder: "border-brand",      activeBg: "bg-brand/10",      activePulse: "bg-brand"      },
-  profiling:   { done: "bg-violet-500", activeBorder: "border-violet-500", activeBg: "bg-violet-500/10", activePulse: "bg-violet-500" },
-  normalizing: { done: "bg-blue-500",   activeBorder: "border-blue-500",   activeBg: "bg-blue-500/10",   activePulse: "bg-blue-500"   },
+  profiling:   { done: "bg-brand",      activeBorder: "border-brand",      activeBg: "bg-brand/10",      activePulse: "bg-brand"      },
+  normalizing: { done: "bg-brand",      activeBorder: "border-brand",      activeBg: "bg-brand/10",      activePulse: "bg-brand"      },
   complete:    { done: "bg-green-500",  activeBorder: "border-green-500",  activeBg: "bg-green-500/10",  activePulse: "bg-green-500"  },
 };
 

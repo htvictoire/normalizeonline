@@ -49,6 +49,7 @@
     "change": "Changer",
     "upload": "Envoyer",
     "chooseAnother": "Choisir un autre fichier",
+    "uploadingLabel": "Import de votre fichier…",
     "analyzing": "Analyse de votre fichier…",
     "redirecting": "Redirection vers la page de révision…",
     "successHeading": "Prêt à configurer",

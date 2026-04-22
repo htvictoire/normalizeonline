@@ -12,6 +12,12 @@ const COUNT_THRESHOLDS = [
   { min: 0,    cls: "text-amber-400" },
 ];
 
+const COUNT_BADGE_THRESHOLDS = [
+  { min: 0.2,  cls: "border-red-200 bg-red-50"     },
+  { min: 0.05, cls: "border-amber-200 bg-amber-50" },
+  { min: 0,    cls: "border-amber-100 bg-amber-50/60" },
+];
+
 const COL_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 export function fmt(n: number): string {
@@ -32,6 +38,12 @@ export function countColor(count: number, total: number): string {
   if (total === 0) return "text-ink-muted";
   const r = count / total;
   return COUNT_THRESHOLDS.find((t) => r >= t.min)!.cls;
+}
+
+export function countBadgeColor(count: number, total: number): string {
+  if (total === 0) return "border-border bg-border/60";
+  const r = count / total;
+  return COUNT_BADGE_THRESHOLDS.find((t) => r >= t.min)!.cls;
 }
 
 export function colLetter(i: number): string {
