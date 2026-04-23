@@ -19,7 +19,8 @@
   "statusFailed": "Processing failed. Please try uploading a new file.",
   "estimatedTime": "~{seconds}s remaining",
   "profilingData": "Profiling results",
-  "downloadReady": "Download output",
+  "exportOutput": "Download the output",
+  "downloadReport": "Download the report",
   "backHome": "Back to home",
   "rows": "rows",
   "columns": "columns",
@@ -27,6 +28,44 @@
   "errorCount": "{count, plural, one {# error} other {# errors}}",
   "warningCount": "{count, plural, one {# warning} other {# warnings}}",
   "errorGeneric": "Something went wrong. Please try again.",
+  "export": {
+    "title": "Export dataset",
+    "close": "Close",
+    "cancel": "Cancel",
+    "download": "Download",
+    "downloadAgain": "Download again",
+    "preparing": "Preparing…",
+    "preparingFile": "Preparing your {format} file…",
+    "downloadStarted": "Download started, kindly check your downloads folder.",
+    "errorTimeout": "Export timed out. Please try again.",
+    "errorFailed": "Export failed. Please try again.",
+    "formats": {
+      "csv": {
+        "label": "CSV",
+        "badge": "Fastest",
+        "description": "Optimized streaming export. Best for large datasets and universal compatibility.",
+        "hint": "Generated once and cached — instant on repeat downloads."
+      },
+      "json": {
+        "label": "JSON",
+        "badge": "Fast",
+        "description": "Structured key-value format. Ideal for APIs, developers, and pipelines.",
+        "hint": "Generated on demand — first request takes a few seconds."
+      },
+      "xlsx": {
+        "label": "Excel",
+        "badge": "On demand",
+        "description": "Multi-sheet workbook (.xlsx). Best for analysis and sharing with non-technical users.",
+        "hint": "Generated on demand — may take longer for large datasets."
+      },
+      "parquet": {
+        "label": "Parquet",
+        "badge": "Instant",
+        "description": "Raw columnar format. Best for data engineers and ML pipelines.",
+        "hint": "Direct download — no conversion needed."
+      }
+    }
+  },
   "profiling": {
     "distinct": "{count} distinct",
     "unique": "{ratio} unique",

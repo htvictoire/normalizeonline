@@ -2,6 +2,7 @@
 
 import { useCallback, type DragEvent } from "react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { UploadArt } from "./arts";
 import { useUpload } from "@/lib/hooks/use-upload";
 
@@ -12,6 +13,9 @@ function formatSize(bytes: number): string {
 
 export default function UploadPad() {
   const t = useTranslations("home.uploadPad");
+  const csvLimit = process.env.NEXT_PUBLIC_UPLOAD_MAX_CSV_FILE_SIZE_MB;
+  const xlsxLimit = process.env.NEXT_PUBLIC_UPLOAD_MAX_XLSX_FILE_SIZE_MB;
+  const jsonLimit = process.env.NEXT_PUBLIC_UPLOAD_MAX_JSON_FILE_SIZE_MB;
   const { state, isDragging, setIsDragging, inputRef, handleFile, handleUpload, handleRetry, reset } =
     useUpload();
 
@@ -77,6 +81,26 @@ export default function UploadPad() {
             >
               {t("selectFiles")}
             </button>
+          </div>
+          <div className="mx-auto mt-4 max-w-2xl text-xs leading-5 text-ink-muted">
+            {t.rich("legalNotice", {
+              terms: (chunks) => (
+                <Link href="/terms" className="text-ink hover:text-brand">
+                  {chunks}
+                </Link>
+              ),
+              privacy: (chunks) => (
+                <Link href="/privacy" className="text-ink hover:text-brand">
+                  {chunks}
+                </Link>
+              ),
+              dataProtection: (chunks) => (
+                <Link href="/data-protection" className="text-ink hover:text-brand">
+                  {chunks}
+                </Link>
+              ),
+            })}
+            {t("limitsNotice", { csvLimit, xlsxLimit, jsonLimit })}
           </div>
         </>
       )}

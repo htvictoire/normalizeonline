@@ -19,7 +19,8 @@
   "statusFailed": "Le traitement a échoué. Veuillez charger un nouveau fichier.",
   "estimatedTime": "~{seconds}s restantes",
   "profilingData": "Résultats du profilage",
-  "downloadReady": "Télécharger le résultat",
+  "exportOutput": "Télécharger le résultat",
+  "downloadReport": "Télécharger le rapport",
   "backHome": "Retour à l'accueil",
   "warnings": "Avertissements",
   "rows": "lignes",
@@ -28,6 +29,44 @@
   "errorCount": "{count, plural, one {# erreur} other {# erreurs}}",
   "warningCount": "{count, plural, one {# avertissement} other {# avertissements}}",
   "errorGeneric": "Une erreur s'est produite. Veuillez réessayer.",
+  "export": {
+    "title": "Exporter le jeu de données",
+    "close": "Fermer",
+    "cancel": "Annuler",
+    "download": "Télécharger",
+    "downloadAgain": "Télécharger à nouveau",
+    "preparing": "Préparation…",
+    "preparingFile": "Préparation de votre fichier {format}…",
+    "downloadStarted": "Téléchargement lancé, veuillez vérifiez votre dossier de téléchargements.",
+    "errorTimeout": "L'export a expiré. Veuillez réessayer.",
+    "errorFailed": "L'export a échoué. Veuillez réessayer.",
+    "formats": {
+      "csv": {
+        "label": "CSV",
+        "badge": "Le plus rapide",
+        "description": "Export en streaming optimisé. Idéal pour les grands jeux de données et la compatibilité universelle.",
+        "hint": "Généré une fois et mis en cache — instantané lors des téléchargements répétés."
+      },
+      "json": {
+        "label": "JSON",
+        "badge": "Rapide",
+        "description": "Format clé-valeur structuré. Idéal pour les APIs, les développeurs et les pipelines.",
+        "hint": "Généré à la demande — la première requête prend quelques secondes."
+      },
+      "xlsx": {
+        "label": "Excel",
+        "badge": "À la demande",
+        "description": "Classeur multi-feuilles (.xlsx). Idéal pour l'analyse et le partage avec des utilisateurs non techniques.",
+        "hint": "Généré à la demande — peut prendre plus de temps pour les grands jeux de données."
+      },
+      "parquet": {
+        "label": "Parquet",
+        "badge": "Instantané",
+        "description": "Format colonnaire brut. Idéal pour les ingénieurs data et les pipelines ML.",
+        "hint": "Téléchargement direct — aucune conversion nécessaire."
+      }
+    }
+  },
   "profiling": {
     "distinct": "{count} distincts",
     "unique": "{ratio} unique",

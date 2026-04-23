@@ -29,10 +29,10 @@ export type UploadPhase =
   | { phase: "success"; dataset: Dataset }
   | { phase: "error"; message: string; file?: File; retryAction: RetryAction };
 
-const SIZE_LIMITS: Record<string, number> = {
-  csv:  150 * 1024 * 1024,
-  xlsx: 15 * 1024 * 1024,
-  json: 10 * 1024 * 1024,
+const SIZE_LIMITS = {
+  csv: Number(process.env.NEXT_PUBLIC_UPLOAD_MAX_CSV_FILE_SIZE_MB) * 1024 * 1024,
+  xlsx: Number(process.env.NEXT_PUBLIC_UPLOAD_MAX_XLSX_FILE_SIZE_MB) * 1024 * 1024,
+  json: Number(process.env.NEXT_PUBLIC_UPLOAD_MAX_JSON_FILE_SIZE_MB) * 1024 * 1024,
 };
 
 function getExtension(file: File): string {
@@ -53,9 +53,9 @@ type ValidationError =
 function getValidationError(file: File): ValidationError | null {
   const ext = getExtension(file);
   if (!getFileType(ext)) return { key: "errors.unsupportedType" };
-  const limit = SIZE_LIMITS[ext];
-  if (file.size > limit) {
-    return { key: "errors.tooLarge", type: ext.toUpperCase(), limit: Math.round(limit / (1024 * 1024)) };
+  const limitBytes = SIZE_LIMITS[ext as keyof typeof SIZE_LIMITS];
+  if (file.size > limitBytes) {
+    return { key: "errors.tooLarge", type: ext.toUpperCase(), limit: limitBytes / (1024 * 1024) };
   }
   return null;
 }

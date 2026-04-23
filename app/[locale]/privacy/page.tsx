@@ -22,6 +22,9 @@ export async function generateMetadata({ params }: PageParams) {
 export default async function PrivacyPolicy({ params }: PageParams) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "privacy" });
+  const csvLimit = process.env.NEXT_PUBLIC_UPLOAD_MAX_CSV_FILE_SIZE_MB;
+  const xlsxLimit = process.env.NEXT_PUBLIC_UPLOAD_MAX_XLSX_FILE_SIZE_MB;
+  const jsonLimit = process.env.NEXT_PUBLIC_UPLOAD_MAX_JSON_FILE_SIZE_MB;
 
   return (
     <LegalPage title={t("page.title")} lastUpdated={t("page.lastUpdated")}>
@@ -44,6 +47,11 @@ export default async function PrivacyPolicy({ params }: PageParams) {
         file is deleted immediately. We do not read, analyze, index, or retain file contents beyond
         what is needed to execute the workflow you initiated. The engine is content-blind — it works
         from structure and type metadata, not from the semantic values in your data.
+      </p>
+      <p>
+        The web interface currently accepts CSV files up to {csvLimit} MB, Excel (XLSX) files up
+        to {xlsxLimit} MB, and JSON files up to {jsonLimit} MB. Files above these limits are
+        rejected by the upload flow and are not submitted for normalization through the web app.
       </p>
 
       <h3>2.2 Normalized Output</h3>

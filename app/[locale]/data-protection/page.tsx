@@ -22,6 +22,9 @@ export async function generateMetadata({ params }: PageParams) {
 export default async function DataProtection({ params }: PageParams) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "dataProtection" });
+  const csvLimit = process.env.NEXT_PUBLIC_UPLOAD_MAX_CSV_FILE_SIZE_MB;
+  const xlsxLimit = process.env.NEXT_PUBLIC_UPLOAD_MAX_XLSX_FILE_SIZE_MB;
+  const jsonLimit = process.env.NEXT_PUBLIC_UPLOAD_MAX_JSON_FILE_SIZE_MB;
 
   return (
     <LegalPage title={t("page.title")} lastUpdated={t("page.lastUpdated")}>
@@ -63,6 +66,11 @@ export default async function DataProtection({ params }: PageParams) {
         to make them available to the processing backend. Once normalization is complete, the source
         file is deleted immediately. It is never copied, indexed, or retained beyond the processing
         lifecycle.
+      </p>
+      <p>
+        The web interface currently accepts CSV files up to {csvLimit} MB, Excel (XLSX) files up
+        to {xlsxLimit} MB, and JSON files up to {jsonLimit} MB. Oversized files are blocked by the
+        upload flow and do not enter the standard normalization pipeline through the web app.
       </p>
 
       <h3>3.2 Normalized output</h3>

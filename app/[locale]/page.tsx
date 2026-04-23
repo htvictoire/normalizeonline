@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { type Locale } from "@/i18n/config";
+import { Link } from "@/i18n/navigation";
 import { buildMetadata } from "@/i18n/seo";
 import Steps from "@/app/components/home/steps";
 import UploadPad from "@/app/components/home/upload-pad";
@@ -64,6 +65,14 @@ export default async function HomePage({ params }: PageParams) {
         <p className="mx-auto mt-4 max-w-2xl text-center text-sm leading-6 text-ink-muted sm:text-base sm:leading-7">
           {t("subline")}
         </p>
+        <div className="mt-8 flex justify-center">
+          <Link
+            href="/new"
+            className="inline-flex items-center rounded-md border border-brand bg-brand px-6 py-3 text-sm font-medium text-white transition-colors hover:border-brand-dark hover:bg-brand-dark"
+          >
+            {t("heroCta")}
+          </Link>
+        </div>
 
         {/* Steps */}
         <section className="mt-10">

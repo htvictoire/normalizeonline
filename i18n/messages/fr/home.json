@@ -5,8 +5,56 @@
     "ogTitle": "Normalize — Transformez vos fichiers en données propres",
     "ogDescription": "Importez un fichier CSV, Excel ou JSON. Normalize suggère comment interpréter vos données : vous confirmez, ajustez par colonne et exportez en CSV, JSON ou Parquet."
   },
+  "heroCta": "Commencer un nouvel import",
   "headline": "Transformez vos fichiers désordonnés en données propres.",
   "subline": "Les fichiers CSV, Excel et JSON arrivent rarement propres. Normalize détecte leur structure, vous laisse la confirmer et produit un jeu de données typé et validé en lequel votre pipeline peut avoir confiance.",
+  "newPage": {
+    "seo": {
+      "title": "Nouvel import — Normalize",
+      "description": "Démarrez un nouvel import dans Normalize. Chargez un fichier CSV, Excel ou JSON et entrez directement dans le flux de révision.",
+      "ogTitle": "Nouvel import — Normalize",
+      "ogDescription": "Chargez un nouveau fichier CSV, Excel ou JSON et passez directement au flux de révision et d'export de Normalize."
+    },
+    "eyebrow": "Nouvel import",
+    "title": "Chargez un nouveau fichier et passez directement à la révision.",
+    "description": "Téléversez un fichier CSV, Excel ou JSON, confirmez l'interprétation de chaque colonne et préparez une exportation propre sans scripts, sans nettoyage manuel et sans suppositions.",
+    "highlights": {
+      "review": {
+        "label": "Révision d'abord",
+        "title": "Rien n'est normalisé sans votre validation.",
+        "text": "Chaque import arrive d'abord dans le flux de révision. Vous confirmez les types, les dates, les séparateurs, les nulls et les choix de sortie avant la conversion."
+      },
+      "artifacts": {
+        "label": "Résultats",
+        "title": "Chaque exécution produit plus qu'un simple fichier.",
+        "text": "Les exécutions terminées incluent des exports, des métriques de qualité, une visibilité sur les erreurs d'analyse et des artefacts traçables pour mieux inspecter le résultat."
+      },
+      "retention": {
+        "label": "Rétention",
+        "title": "Conçu pour un usage actif, pas pour le stockage long terme.",
+        "text": "Les fichiers source sont supprimés après la normalisation et les résultats générés ne restent disponibles que pendant une courte fenêtre de téléchargement."
+      }
+    },
+    "summary": {
+      "label": "À quoi vous attendre",
+      "title": "Un flux simple, du fichier brut au jeu de données exploitable.",
+      "text": "Cette page est pensée pour un nouvel import uniquement : choisissez un fichier, confirmez sa structure, puis poursuivez le flux de normalisation sans configuration supplémentaire.",
+      "items": {
+        "noAccount": {
+          "title": "Aucun compte requis",
+          "text": "Vous pouvez commencer immédiatement avec un fichier et passer à la révision sans créer de profil."
+        },
+        "singleFlow": {
+          "title": "Flux mono-fichier",
+          "text": "Idéal pour un jeu de données à la fois, surtout si vous voulez inspecter la structure avant d'exporter."
+        },
+        "exports": {
+          "title": "Résultat prêt à exporter",
+          "text": "Après la révision et la normalisation, vous pouvez télécharger des sorties propres dans les formats pris en charge par le workflow."
+        }
+      }
+    }
+  },
   "steps": {
     "upload": {
       "title": "Importer",
@@ -45,7 +93,9 @@
   },
   "uploadPad": {
     "heading": "Déposez un fichier CSV, Excel ou JSON ici",
-    "selectFiles": "Sélectionner des fichiers",
+    "selectFiles": "Téléverser un fichier",
+    "legalNotice": "En téléversant un fichier, vous acceptez nos <terms>Conditions d'utilisation</terms>, notre <privacy>Politique de confidentialité</privacy> et notre <dataProtection>Protection des données</dataProtection>.",
+    "limitsNotice": "Téléversez des fichiers CSV jusqu'à {csvLimit} Mo, Excel jusqu'à {xlsxLimit} Mo, JSON jusqu'à {jsonLimit} Mo.",
     "change": "Changer",
     "upload": "Envoyer",
     "chooseAnother": "Choisir un autre fichier",

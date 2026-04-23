@@ -8,6 +8,12 @@ export const ROUTE_DEFS = [
     indexable: true,
   },
   {
+    key: "NEW",
+    base: "/new",
+    slugs: { en: "/new", fr: "/nouveau" },
+    indexable: true,
+  },
+  {
     key: "BLOG",
     base: "/blog",
     slugs: { en: "/blog", fr: "/blogue" },

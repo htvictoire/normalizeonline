@@ -3,7 +3,9 @@
 import { useState, useEffect, useRef, Fragment } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { getDataset, getDownloadUrl } from "@/lib/api/endpoints/normalization";
+import { getDataset, getReportUrl } from "@/lib/api/endpoints/normalization";
+import { useExportFile } from "@/lib/hooks/use-export-file";
+import ExportModal from "./export-modal";
 import type { Dataset } from "@/lib/types/dataset";
 import type { InstanceStatus, StageColor } from "@/lib/types/normalize";
 import { IN_FLIGHT, TERMINAL, STAGES, STATUS_CONFIG, STAGE_ORDER } from "@/lib/constants/instance-status";
@@ -41,6 +43,24 @@ export default function ProcessingView({ dataset: initialDataset }: { dataset: D
   const [dataset, setDataset] = useState(initialDataset);
   const [progress, setProgress] = useState(0);
   const [progressVisible, setProgressVisible] = useState(!TERMINAL.includes((initialDataset.status ?? "") as InstanceStatus));
+  const [exportOpen, setExportOpen] = useState(false);
+  const [reportLoading, setReportLoading] = useState(false);
+  const { state: exportState, startExport, reset: resetExport } = useExportFile(dataset.id);
+
+  async function handleReportDownload() {
+    setReportLoading(true);
+    try {
+      const { url, filename } = await getReportUrl(dataset.id);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } finally {
+      setReportLoading(false);
+    }
+  }
   const creepRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -119,20 +139,33 @@ export default function ProcessingView({ dataset: initialDataset }: { dataset: D
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-xl font-bold text-ink">{t("heading")}</h1>
         {(status === "READY" || status === "READY_WITH_WARNINGS") && (
-          <button
-            type="button"
-            onClick={async () => {
-              const { url, filename } = await getDownloadUrl(dataset.id);
-              const a = document.createElement("a");
-              a.href = url;
-              a.download = filename;
-              a.click();
-            }}
-            className="shrink-0 rounded-md border border-brand bg-brand px-5 py-2.5 text-sm font-medium text-white transition-colors hover:border-brand-dark hover:bg-brand-dark"
-          >
-            {t("downloadReady")}
-          </button>
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              disabled={reportLoading}
+              onClick={handleReportDownload}
+              className="flex items-center gap-2 rounded-md border border-brand px-8 py-3 text-sm font-medium text-brand transition-colors hover:border-ink hover:text-ink disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {reportLoading && (
+                <span className="h-3.5 w-3.5 rounded-full border-2 border-brand/20 border-t-brand animate-[spin_0.6s_linear_infinite]" />
+              )}
+              {t("downloadReport")}
+            </button>
+            <button
+              type="button"
+              onClick={() => { resetExport(); setExportOpen(true); }}
+              className="rounded-md border border-brand bg-brand px-5 py-2.5 text-sm font-medium text-white transition-colors hover:border-brand-dark hover:bg-brand-dark"
+            >
+              {t("exportOutput")}
+            </button>
+          </div>
         )}
+        <ExportModal
+          open={exportOpen}
+          exportState={exportState}
+          onExport={startExport}
+          onClose={() => setExportOpen(false)}
+        />
       </div>
       <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-muted">
         <span><span className="font-medium text-ink">{rowCount.toLocaleString()}</span> {t("rows")}</span>

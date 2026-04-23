@@ -5,8 +5,56 @@
     "ogTitle": "Normalize — Turn messy files into clean data",
     "ogDescription": "Upload a CSV, Excel, or JSON file. Normalize suggests how to interpret your data — you confirm, adjust per column, and export as CSV, JSON, or Parquet."
   },
+  "heroCta": "Start a new upload",
   "headline": "Turn messy files into clean data.",
   "subline": "CSV, Excel, and JSON files rarely arrive clean. Normalize detects their structure, lets you confirm it, and produces a typed, validated dataset your pipeline can trust.",
+  "newPage": {
+    "seo": {
+      "title": "New Upload — Normalize",
+      "description": "Start a new upload in Normalize. Bring a CSV, Excel, or JSON file into the review flow and prepare clean, typed exports.",
+      "ogTitle": "New Upload — Normalize",
+    "ogDescription": "Upload a fresh CSV, Excel, or JSON file and move directly into Normalize's review and export workflow."
+    },
+    "eyebrow": "New upload",
+    "title": "Bring in a fresh file and move straight into review.",
+    "description": "Upload a CSV, Excel, or JSON file, confirm how every column should be interpreted, and prepare a clean export without scripts, manual cleanup, or guesswork.",
+    "highlights": {
+      "review": {
+        "label": "Review first",
+        "title": "Nothing gets normalized behind your back.",
+        "text": "Every upload lands in the review flow first. You confirm column types, dates, separators, null tokens, and output choices before conversion starts."
+      },
+      "artifacts": {
+        "label": "Outputs",
+        "title": "Each run produces more than a flat file.",
+        "text": "Completed runs include exports, quality metrics, parse issue visibility, and traceable artifacts so the result is easier to inspect and trust."
+      },
+      "retention": {
+        "label": "Retention",
+        "title": "Built for active work, not long-term storage.",
+        "text": "Source files are removed after normalization, and generated output stays available only for a short download window."
+      }
+    },
+    "summary": {
+      "label": "What to Expect",
+      "title": "One focused upload flow from raw file to usable dataset.",
+      "text": "This page is designed for a new upload only: choose a file, confirm the structure, and continue through the normalization flow without extra setup.",
+      "items": {
+        "noAccount": {
+          "title": "No account required",
+          "text": "You can start with a file immediately and move into review without creating a profile."
+        },
+        "singleFlow": {
+          "title": "Single-file workflow",
+          "text": "Best for one fresh dataset at a time, especially when you want to inspect the structure before exporting."
+        },
+        "exports": {
+          "title": "Export-ready result",
+          "text": "After review and normalization, you can download clean outputs in the formats supported by the workflow."
+        }
+      }
+    }
+  },
   "steps": {
     "upload": {
       "title": "Upload",
@@ -45,7 +93,9 @@
   },
   "uploadPad": {
     "heading": "Drop a CSV, Excel, or JSON file here",
-    "selectFiles": "Select files",
+    "selectFiles": "Upload file",
+    "legalNotice": "By uploading, you agree to our <terms>Terms of Use</terms>, <privacy>Privacy Policy</privacy>, and <dataProtection>Data Protection</dataProtection>.",
+    "limitsNotice": "Upload CSV up to {csvLimit} MB, Excel up to {xlsxLimit} MB, JSON up to {jsonLimit} MB.",
     "change": "Change",
     "upload": "Upload",
     "chooseAnother": "Choose another file",

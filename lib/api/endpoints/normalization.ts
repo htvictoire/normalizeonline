@@ -35,9 +35,15 @@ export function getDataset(id: string) {
     .then(unwrap);
 }
 
-export function getDownloadUrl(id: string): Promise<{ url: string; filename: string }> {
+export function getExportUrl(id: string, format: string): Promise<{ url: string; filename: string }> {
   return apiClient
-    .get<ApiResponse<{ url: string; filename: string }>>(API_ENDPOINTS.datasetDownload(id))
+    .get<ApiResponse<{ url: string; filename: string }>>(API_ENDPOINTS.datasetExport(id), { params: { fmt: format } })
+    .then(unwrap);
+}
+
+export function getReportUrl(id: string): Promise<{ url: string; filename: string }> {
+  return apiClient
+    .get<ApiResponse<{ url: string; filename: string }>>(API_ENDPOINTS.datasetReport(id))
     .then(unwrap);
 }
 

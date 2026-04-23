@@ -22,15 +22,18 @@ export async function generateMetadata({ params }: PageParams) {
 export default async function TermsOfUse({ params }: PageParams) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "terms" });
+  const csvLimit = process.env.NEXT_PUBLIC_UPLOAD_MAX_CSV_FILE_SIZE_MB;
+  const xlsxLimit = process.env.NEXT_PUBLIC_UPLOAD_MAX_XLSX_FILE_SIZE_MB;
+  const jsonLimit = process.env.NEXT_PUBLIC_UPLOAD_MAX_JSON_FILE_SIZE_MB;
 
   return (
     <LegalPage title={t("page.title")} lastUpdated={t("page.lastUpdated")}>
       <h2>1. Acceptance of Terms</h2>
       <p>
-        By accessing or using Normalize (the "Service"), you agree to be bound by these Terms of
-        Use ("Terms"). If you do not agree, do not use the Service. Normalize is a data
+        By accessing or using Normalize (the &quot;Service&quot;), you agree to be bound by these Terms of
+        Use (&quot;Terms&quot;). If you do not agree, do not use the Service. Normalize is a data
         normalization tool, not a registered legal entity. The Service is operated by its open
-        source contributors (collectively "we," "us," or "our"). These Terms form a legally
+        source contributors (collectively &quot;we,&quot; &quot;us,&quot; or &quot;our&quot;). These Terms form a legally
         binding agreement between you and those contributors.
       </p>
 
@@ -44,6 +47,11 @@ export default async function TermsOfUse({ params }: PageParams) {
         After confirmation, you set your output preferences (date styles, number formats, export
         type) and Normalize produces your clean dataset. Output can be downloaded as CSV, Excel
         (XLSX), JSON, or Parquet.
+      </p>
+      <p>
+        The web interface currently accepts CSV files up to {csvLimit} MB, Excel (XLSX) files up
+        to {xlsxLimit} MB, and JSON files up to {jsonLimit} MB. Files above these size limits are
+        not accepted through the upload flow.
       </p>
       <p>
         The normalization output reflects the configuration you confirmed. Normalize executes your
@@ -85,6 +93,10 @@ export default async function TermsOfUse({ params }: PageParams) {
         <li>
           Use the Service to process personal data belonging to third parties without their
           knowledge or a lawful basis for doing so.
+        </li>
+        <li>
+          Attempt to bypass the documented file upload size limits or other technical safeguards in
+          the upload flow.
         </li>
       </ul>
 
@@ -159,7 +171,7 @@ export default async function TermsOfUse({ params }: PageParams) {
 
       <h2>9. Disclaimer of Warranties</h2>
       <p>
-        The Service is provided "as is" and "as available" without warranties of any kind, express
+        The Service is provided &quot;as is&quot; and &quot;as available&quot; without warranties of any kind, express
         or implied, including but not limited to warranties of merchantability, fitness for a
         particular purpose, accuracy of output, or non-infringement. We do not warrant that the
         normalization output will be free of errors or suitable for any specific downstream use.
@@ -200,7 +212,7 @@ export default async function TermsOfUse({ params }: PageParams) {
       <h2>13. Changes to These Terms</h2>
       <p>
         We may update these Terms from time to time. We will notify you of material changes by
-        updating the "last updated" date and, where appropriate, by more prominent notice. Continued
+        updating the &quot;last updated&quot; date and, where appropriate, by more prominent notice. Continued
         use of the Service after the effective date constitutes acceptance of the updated Terms.
       </p>
 
