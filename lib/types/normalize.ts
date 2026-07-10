@@ -101,8 +101,74 @@ export type DateColumnConfig = {
   date_format: string;
 };
 
+export type IdentifierKind = "primary" | "foreign" | "business_key" | "opaque";
+
+export type LocalizedReasons = {
+  en: string[];
+  fr: string[];
+  es: string[];
+  ar: string[];
+};
+
+export type IdentifierColumnConfig = {
+  type: "identifier";
+  identifier_kind: IdentifierKind;
+  reasons: LocalizedReasons | null;
+};
+
+export type DateTimeColumnConfig = {
+  type: "datetime";
+  datetime_format: string;
+};
+
+export type TimeColumnConfig = {
+  type: "time";
+  time_format: string;
+};
+
+export type CodeFormat = "alpha_2" | "alpha_3";
+
+export type CountryCodeColumnConfig = {
+  type: "country_code";
+  code_format: CodeFormat;
+};
+
+export type CurrencyCodeColumnConfig = {
+  type: "currency_code";
+};
+
+export type LanguageCodeColumnConfig = {
+  type: "language_code";
+  code_format: CodeFormat;
+};
+
+export type CategoricalColumnConfig = {
+  type: "categorical";
+  canonical_values: string[];
+};
+
+export type EmailColumnConfig = {
+  type: "email";
+};
+
+export type UrlColumnConfig = {
+  type: "url";
+};
+
+export type IpAddressVersion = "any" | "v4" | "v6";
+
+export type IpAddressColumnConfig = {
+  type: "ip_address";
+  version: IpAddressVersion;
+};
+
+export type PhoneColumnConfig = {
+  type: "phone";
+};
+
 export type ColumnConfig =
   | StringColumnConfig
+  | IdentifierColumnConfig
   | BooleanColumnConfig
   | IntegerColumnConfig
   | DecimalColumnConfig
@@ -110,7 +176,17 @@ export type ColumnConfig =
   | PercentageColumnConfig
   | SignedColumnConfig
   | AccountingColumnConfig
-  | DateColumnConfig;
+  | DateColumnConfig
+  | DateTimeColumnConfig
+  | TimeColumnConfig
+  | CountryCodeColumnConfig
+  | CurrencyCodeColumnConfig
+  | LanguageCodeColumnConfig
+  | CategoricalColumnConfig
+  | EmailColumnConfig
+  | UrlColumnConfig
+  | IpAddressColumnConfig
+  | PhoneColumnConfig;
 
 export type CsvSourceFormat = {
   format_type: "csv";
@@ -275,20 +351,70 @@ export type AccountingColumnProfile = {
   readonly separator_mismatch_detected: boolean;
 };
 
+export type DateTimeColumnProfile = {
+  readonly profile_type: "datetime";
+  readonly format_match_count: number;
+  readonly format_match_ratio: number;
+};
+
+export type TimeColumnProfile = {
+  readonly profile_type: "time";
+  readonly format_match_count: number;
+  readonly format_match_ratio: number;
+};
+
+export type IdentifierColumnProfile = {
+  readonly profile_type: "identifier";
+  readonly distinct_count: number;
+  readonly distinct_ratio: number;
+  readonly duplicate_count: number;
+  readonly uniqueness_ratio: number;
+  readonly min_length: number;
+  readonly max_length: number;
+};
+
+export type ValidityColumnProfile = {
+  readonly valid_count: number;
+  readonly invalid_count: number;
+  readonly valid_ratio: number;
+};
+
+export type CountryCodeColumnProfile = ValidityColumnProfile & { readonly profile_type: "country_code" };
+export type CurrencyCodeColumnProfile = ValidityColumnProfile & { readonly profile_type: "currency_code" };
+export type LanguageCodeColumnProfile = ValidityColumnProfile & { readonly profile_type: "language_code" };
+export type CategoricalColumnProfile = ValidityColumnProfile & { readonly profile_type: "categorical" };
+export type EmailColumnProfile = ValidityColumnProfile & { readonly profile_type: "email" };
+export type UrlColumnProfile = ValidityColumnProfile & { readonly profile_type: "url" };
+export type IpAddressColumnProfile = ValidityColumnProfile & { readonly profile_type: "ip_address" };
+export type PhoneColumnProfile = ValidityColumnProfile & { readonly profile_type: "phone" };
+
 export type ColumnProfile =
   | StringColumnProfile
+  | IdentifierColumnProfile
   | BooleanColumnProfile
   | IntegerColumnProfile
   | DateColumnProfile
+  | DateTimeColumnProfile
+  | TimeColumnProfile
   | DecimalColumnProfile
   | PercentageColumnProfile
   | SignedColumnProfile
   | CurrencyColumnProfile
-  | AccountingColumnProfile;
+  | AccountingColumnProfile
+  | CountryCodeColumnProfile
+  | CurrencyCodeColumnProfile
+  | LanguageCodeColumnProfile
+  | CategoricalColumnProfile
+  | EmailColumnProfile
+  | UrlColumnProfile
+  | IpAddressColumnProfile
+  | PhoneColumnProfile;
 
 export type ColumnType =
-  | "string" | "boolean" | "integer" | "decimal"
-  | "currency" | "percentage" | "signed" | "accounting" | "date";
+  | "string" | "identifier" | "boolean" | "integer" | "decimal"
+  | "currency" | "percentage" | "signed" | "accounting" | "date"
+  | "datetime" | "time" | "country_code" | "currency_code" | "language_code"
+  | "categorical" | "email" | "url" | "ip_address" | "phone";
 
 export type ColumnProfileStats = {
   readonly label: string;
@@ -353,4 +479,12 @@ export type SuggestionDisplay = {
   row_count: number;
   columns: Record<string, SuggestedColumnDisplay>;
   sample_rows: string[][];
+};
+
+export type SuggestionMethod = "rule_based" | "ai";
+
+export type SuggestionConfidence = {
+  delimiter: number | null;
+  header: number | null;
+  column_config: Record<string, number>;
 };

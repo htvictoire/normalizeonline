@@ -84,6 +84,9 @@
     "withSymbol": "{count} avec symbole",
     "noValue": "aucun",
     "nulls": "nulls",
-    "nullish": "nullish"
+    "nullish": "nullish",
+    "duplicates": "{count} doublons",
+    "allValid": "tout valide",
+    "validStats": "{ratio} valide · {count} correspondant"
   }
 }

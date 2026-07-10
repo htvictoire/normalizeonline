@@ -83,6 +83,9 @@
     "withSymbol": "{count} with symbol",
     "noValue": "none",
     "nulls": "nulls",
-    "nullish": "nullish"
+    "nullish": "nullish",
+    "duplicates": "{count} duplicates",
+    "allValid": "all valid",
+    "validStats": "{ratio} valid · {count} matched"
   }
 }

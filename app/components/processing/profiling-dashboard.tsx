@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import type {
-  ProfilingOutput, ColumnProfileStats, ColumnProfile, NormalizationIssue, IssueSeverity,
+  ProfilingOutput, ColumnProfileStats, ColumnProfile, ValidityColumnProfile, NormalizationIssue, IssueSeverity,
 } from "@/lib/types/normalize";
 import { TYPE_COLOR } from "@/lib/constants/column-type-colors";
 import CountBadge from "@/app/components/count-badge";
@@ -21,6 +21,14 @@ function formatLabel(s: string) {
 type Tx = (key: string, values?: Record<string, string | number>) => string;
 type ProfileResult = { text: string; warn?: string };
 type ProfileHandler<T extends ColumnProfile> = (p: T, t: Tx) => ProfileResult;
+
+function validityStats<T extends ColumnProfile & ValidityColumnProfile>(p: T, t: Tx): ProfileResult {
+  return {
+    text: p.valid_ratio >= 1
+      ? t("profiling.allValid")
+      : t("profiling.validStats", { ratio: pct(p.valid_ratio), count: fmt(p.valid_count) }),
+  };
+}
 
 const PROFILE_STATS: { [K in ColumnProfile["profile_type"]]: ProfileHandler<Extract<ColumnProfile, { profile_type: K }>> } = {
   string: (p, t) => ({
@@ -118,6 +126,38 @@ const PROFILE_STATS: { [K in ColumnProfile["profile_type"]]: ProfileHandler<Extr
     if (p.separator_mismatch_detected) parts.push(t("profiling.separatorMismatch"));
     return { text: parts.join(" · ") };
   },
+
+  identifier: (p, t) => ({
+    text: [
+      t("profiling.distinct", { count: fmt(p.distinct_count) }),
+      t("profiling.unique", { ratio: pct(p.uniqueness_ratio) }),
+      p.min_length === p.max_length
+        ? t("profiling.lengthFixed", { n: p.min_length })
+        : t("profiling.lengthRange", { min: p.min_length, max: p.max_length }),
+    ].join(" · "),
+    warn: p.duplicate_count > 0 ? t("profiling.duplicates", { count: fmt(p.duplicate_count) }) : undefined,
+  }),
+
+  datetime: (p, t) => ({
+    text: p.format_match_ratio >= 1
+      ? t("profiling.allMatched")
+      : t("profiling.formatMatchStats", { ratio: pct(p.format_match_ratio), count: fmt(p.format_match_count) }),
+  }),
+
+  time: (p, t) => ({
+    text: p.format_match_ratio >= 1
+      ? t("profiling.allMatched")
+      : t("profiling.formatMatchStats", { ratio: pct(p.format_match_ratio), count: fmt(p.format_match_count) }),
+  }),
+
+  country_code:  validityStats,
+  currency_code: validityStats,
+  language_code: validityStats,
+  categorical:   validityStats,
+  email:         validityStats,
+  url:           validityStats,
+  ip_address:    validityStats,
+  phone:         validityStats,
 };
 
 function profileStats(profile: ColumnProfile, t: Tx): ProfileResult {

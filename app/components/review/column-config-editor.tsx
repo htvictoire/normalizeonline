@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type { ColumnConfig, GroupingStyle } from "@/lib/types/normalize";
 import { TYPE_COLOR } from "@/lib/constants/column-type-colors";
 import { getBoolOptions } from "@/lib/utils";
@@ -18,14 +18,25 @@ export function defaultConfig(newType: ColumnType, from: ColumnConfig): ColumnCo
 
   switch (newType) {
     case "string":     return { type: "string" };
+    case "identifier": return { type: "identifier", identifier_kind: "opaque", reasons: null };
     case "boolean":    return { type: "boolean", true_tokens: ["true", "yes", "1"], false_tokens: ["false", "no", "0"] };
     case "date":       return { type: "date", date_format: "%Y-%m-%d" };
+    case "datetime":   return { type: "datetime", datetime_format: "%Y-%m-%d %H:%M:%S" };
+    case "time":       return { type: "time", time_format: "%H:%M:%S" };
     case "integer":    return { type: "integer", thousand_separator: sep, grouping_style: grp };
     case "decimal":    return { type: "decimal",    decimal_separator: dec, thousand_separator: sep, grouping_style: grp, allow_leading_decimal_point: ldp };
     case "currency":   return { type: "currency",   decimal_separator: dec, thousand_separator: sep, grouping_style: grp, allow_leading_decimal_point: ldp };
     case "percentage": return { type: "percentage", decimal_separator: dec, thousand_separator: sep, grouping_style: grp, allow_leading_decimal_point: ldp };
     case "signed":     return { type: "signed",     decimal_separator: dec, thousand_separator: sep, grouping_style: grp, allow_leading_decimal_point: ldp, positive_markers: [],     negative_markers: ["-"],       parentheses_as_negative: false };
     case "accounting": return { type: "accounting", decimal_separator: dec, thousand_separator: sep, grouping_style: grp, allow_leading_decimal_point: ldp, positive_markers: ["DR"], negative_markers: ["-", "CR"], parentheses_as_negative: true  };
+    case "country_code":  return { type: "country_code", code_format: "alpha_2" };
+    case "currency_code": return { type: "currency_code" };
+    case "language_code": return { type: "language_code", code_format: "alpha_2" };
+    case "categorical":   return { type: "categorical", canonical_values: [] };
+    case "email":      return { type: "email" };
+    case "url":        return { type: "url" };
+    case "ip_address": return { type: "ip_address", version: "any" };
+    case "phone":      return { type: "phone" };
   }
 }
 
@@ -36,6 +47,19 @@ const DATE_FORMAT_OPTIONS = [
   { value: "%d/%m/%Y", label: "%d/%m/%Y  (15/01/2024)" },
   { value: "%m-%d-%Y", label: "%m-%d-%Y  (01-15-2024)" },
   { value: "%d-%m-%Y", label: "%d-%m-%Y  (15-01-2024)" },
+];
+
+const DATETIME_FORMAT_OPTIONS = [
+  { value: "%Y-%m-%d %H:%M:%S", label: "%Y-%m-%d %H:%M:%S  (2024-01-15 13:45:00)" },
+  { value: "%Y-%m-%dT%H:%M:%S", label: "%Y-%m-%dT%H:%M:%S  (2024-01-15T13:45:00)" },
+  { value: "%m/%d/%Y %H:%M:%S", label: "%m/%d/%Y %H:%M:%S  (01/15/2024 13:45:00)" },
+  { value: "%d/%m/%Y %H:%M:%S", label: "%d/%m/%Y %H:%M:%S  (15/01/2024 13:45:00)" },
+];
+
+const TIME_FORMAT_OPTIONS = [
+  { value: "%H:%M:%S", label: "%H:%M:%S  (13:45:00)" },
+  { value: "%H:%M",    label: "%H:%M  (13:45)" },
+  { value: "%I:%M %p", label: "%I:%M %p  (01:45 PM)" },
 ];
 
 const DECIMAL_SEP_OPTIONS = [
@@ -61,7 +85,11 @@ export function TypeSelector({ config, onChange }: { config: ColumnConfig; onCha
   const t = useTranslations("review");
   const [open, setOpen] = useState(false);
   const colors = TYPE_COLOR[config.type] ;
-  const types: ColumnType[] = ["string", "boolean", "integer", "decimal", "currency", "percentage", "signed", "accounting", "date"];
+  const types: ColumnType[] = [
+    "string", "identifier", "boolean", "integer", "decimal", "currency", "percentage",
+    "signed", "accounting", "date", "datetime", "time", "country_code", "currency_code",
+    "language_code", "categorical", "email", "url", "ip_address", "phone",
+  ];
 
   return (
     <div
@@ -107,12 +135,28 @@ export function TypeSelector({ config, onChange }: { config: ColumnConfig; onCha
 export function ConfigEditor({ config, onChange }: { config: ColumnConfig; onChange: (c: ColumnConfig) => void }) {
   const t = useTranslations("review");
   const tr = useTranslations();
+  const locale = useLocale() as "en" | "fr";
 
   const groupingOptions = [
     { value: "western", label: t("groupingWestern") },
     { value: "indian",  label: t("groupingIndian") },
   ];
   const boolOptions = getBoolOptions(tr);
+  const codeFormatOptions = [
+    { value: "alpha_2", label: t("alpha2") },
+    { value: "alpha_3", label: t("alpha3") },
+  ];
+  const ipVersionOptions = [
+    { value: "any", label: t("ipAny") },
+    { value: "v4",  label: t("ipV4") },
+    { value: "v6",  label: t("ipV6") },
+  ];
+  const identifierKindOptions = [
+    { value: "primary",      label: t("identifierKindPrimary") },
+    { value: "foreign",      label: t("identifierKindForeign") },
+    { value: "business_key", label: t("identifierKindBusinessKey") },
+    { value: "opaque",       label: t("identifierKindOpaque") },
+  ];
 
   function patch(fields: Partial<ColumnConfig>) {
     onChange({ ...config, ...fields } as ColumnConfig);
@@ -120,7 +164,95 @@ export function ConfigEditor({ config, onChange }: { config: ColumnConfig; onCha
 
   switch (config.type) {
     case "string":
+    case "currency_code":
+    case "email":
+    case "url":
+    case "phone":
       return null;
+
+    case "identifier": {
+      const reasons = config.reasons?.[locale] ?? config.reasons?.en;
+      return (
+        <div className="mt-3 flex flex-col gap-2">
+          <FieldSelect
+            label={t("identifierKind")}
+            value={config.identifier_kind}
+            options={identifierKindOptions}
+            onChange={(v) => patch({ identifier_kind: v } as ColumnConfig)}
+          />
+          {reasons && (
+            <div className="flex flex-col gap-0.5">
+              <span className="text-xs font-medium text-ink">{t("reasons")}</span>
+              <ul className="list-disc pl-4 text-xs text-ink-muted">
+                {reasons.map((reason) => <li key={reason}>{reason}</li>)}
+              </ul>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    case "datetime":
+      return (
+        <div className="mt-3">
+          <FieldSelect
+            label={t("datetimeFormat")}
+            value={config.datetime_format}
+            width={WIDE_SELECT_WIDTH}
+            options={withCustom(DATETIME_FORMAT_OPTIONS, config.datetime_format)}
+            onChange={(v) => patch({ datetime_format: v } as ColumnConfig)}
+          />
+        </div>
+      );
+
+    case "time":
+      return (
+        <div className="mt-3">
+          <FieldSelect
+            label={t("timeFormat")}
+            value={config.time_format}
+            width={WIDE_SELECT_WIDTH}
+            options={withCustom(TIME_FORMAT_OPTIONS, config.time_format)}
+            onChange={(v) => patch({ time_format: v } as ColumnConfig)}
+          />
+        </div>
+      );
+
+    case "country_code":
+    case "language_code":
+      return (
+        <div className="mt-3">
+          <FieldSelect
+            label={t("codeFormat")}
+            value={config.code_format}
+            options={codeFormatOptions}
+            onChange={(v) => patch({ code_format: v } as ColumnConfig)}
+          />
+        </div>
+      );
+
+    case "ip_address":
+      return (
+        <div className="mt-3">
+          <FieldSelect
+            label={t("ipVersion")}
+            value={config.version}
+            options={ipVersionOptions}
+            onChange={(v) => patch({ version: v } as ColumnConfig)}
+          />
+        </div>
+      );
+
+    case "categorical":
+      return (
+        <div className="mt-3 flex flex-col gap-3">
+          <FieldTokens
+            label={t("canonicalValues")}
+            tokens={config.canonical_values}
+            onChange={(v) => patch({ canonical_values: v } as ColumnConfig)}
+          />
+        </div>
+      );
 
     case "boolean":
       return (
